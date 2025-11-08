@@ -1,0 +1,25 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<article class="help-content" itemscope itemtype="http://schema.org/BlogPost">
+	<div class="help-article-info">
+	    <h6 class='text-muted'>By {{ author }} on {{ frappe.format_date(creation) }}</h6>
+		<p>
+			<span class="indicator {{ level_class }}">{{ level }}</span>
+		</p>
+	</div>
+	<div class="longform" itemprop="articleBody">
+	{{ content }}
+	</div>
+	<p><a href="/{{ parent_website_route }}">{{ _("More articles on {0}").format(category) }}</a></p>
+</article>
+<div class="help-article-comments">
+	<h3>Comments</h3>
+	{% include 'templates/includes/comments/comments.html' %}
+</div>
+<script>
+frappe.ready(function() {
+    frappe.set_search_path("/kb");
+});
+</script>
+{% endblock %}

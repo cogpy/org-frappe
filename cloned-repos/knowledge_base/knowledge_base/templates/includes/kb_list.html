@@ -1,0 +1,47 @@
+{% extends "templates/web.html" %}
+
+{% block title %}
+	{% if frappe.local.form_dict.category %}
+		{{ _("Knowledge Base: {0}").format(category) }}
+	{% else %}
+		{{ title }}
+	{% endif %}
+{% endblock %}
+
+{% block page_content %}
+<!-- no-header -->
+
+{% if frappe.local.form_dict.category %}
+<div class="list-hero">
+	<h1>
+		{{ _("Questions for {0}").format(category) }}
+	</h1>
+</div>
+{% elif frappe.local.form_dict.txt %}
+<div class="list-hero">
+	<h1>
+		{{ _('Filtered by "{0}"').format(frappe.local.form_dict.txt) }}
+	</h1>
+</div>
+{% endif %}
+
+<div class="website-list help-category-list">
+	{% include "templates/includes/list/list.html" %}
+</div>
+{% endblock %}
+
+{% block script %}
+<script>{% include "templates/includes/list/list.js" %}</script>
+{% endblock %}
+
+{% block style %}
+<style>
+.help-category-label {
+	margin-top: 15px;
+}
+
+.page-content {
+	padding-bottom: 0px;
+}
+</style>
+{% endblock %}

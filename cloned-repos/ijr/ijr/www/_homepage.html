@@ -1,0 +1,57 @@
+---
+no_cache: 1
+skip_frappe_bundle: 1
+title: India Justice Report
+description: India Justice Report ranks 18 large and 7 small states according to their capacity to deliver justice to all
+---
+
+{%- extends "templates/web.html" -%}
+
+{%- block navbar -%}
+{%- endblock -%}
+
+{%- block page_container -%}
+<div class="homepage">
+    <header>
+        <div>
+            <a class="navbar-brand" href="/">
+                <img src="{{ banner_image }}" alt="India Justice Report Logo"/>
+            </a>
+        </div>
+
+        <h1 class="mx-auto">India Justice Report Ranks States on Police, Judiciary, Prisons and Legal Aid</h1>
+        <div class="container">
+            <div class="homepage-nav mt-10">
+                {% include "templates/includes/navbar/navbar_items.html" %}
+            </div>
+        </div>
+    </header>
+
+    {% macro image_block(fact, class=None) %}
+    <div class="col-sm-6 text-center {{ resolve_class(class) }}">
+        {% if fact.image %}
+        <img src="{{ fact.image }}" alt="{{ fact.title }}" style="width: 70%;">
+        {% endif %}
+    </div>
+    {% endmacro %}
+
+    {% for fact in frappe.db.get_all('IJR Homepage Fact', filters={'published': 1}, fields=['*'], order_by='creation asc, `order` asc') %}
+    <section class="homepage-stat">
+        <div class="container">
+            <div class="row align-items-center">
+                {{ image_block(fact, 'mt-6 mt-sm-0' if fact.image_on_left else 'mb-6 mb-sm-0 order-1') }}
+                <div class="col-sm-6">
+                    <h2>{{ fact.section_title or '' }}</h2>
+                    <p class="title">{{ fact.title or '' }}</p>
+                    <p class="stat">{{ fact.highlight_stat or '' }}</p>
+                    <p class="subtitle">{{ fact.subtitle or '' }}</p>
+                    {% if fact.url and fact.url_title %}
+                    <a class="link" href="{{ fact.url }}">{{ fact.url_title }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endfor %}
+</div>
+{%- endblock -%}
