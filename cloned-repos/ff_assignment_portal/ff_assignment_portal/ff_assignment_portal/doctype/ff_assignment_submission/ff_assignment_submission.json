@@ -1,0 +1,183 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SUBMISSION-{MM}-{YYYY}-{#####}",
+ "creation": "2023-08-09 19:21:25.279297",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "day",
+  "submission",
+  "demo_video",
+  "column_break_uxap",
+  "cloned_to_code_server",
+  "full_name",
+  "status",
+  "similarity_score",
+  "similar_assignment",
+  "section_break_gutm",
+  "feedback",
+  "submission_summary",
+  "hashes"
+ ],
+ "fields": [
+  {
+   "fetch_from": "user.full_name",
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_uxap",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "submission",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Submission",
+   "reqd": 1
+  },
+  {
+   "default": "Check In Progress",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Unchecked\nCheck In Progress\nStale\nPassed\nFailed",
+   "reqd": 1,
+   "sort_options": 1
+  },
+  {
+   "depends_on": "eval:doc.status!=\"Unchecked\"",
+   "fieldname": "section_break_gutm",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "feedback",
+   "fieldtype": "HTML Editor",
+   "label": "Feedback",
+   "read_only": 1
+  },
+  {
+   "fieldname": "day",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Day",
+   "options": "1\n2\n3\n4",
+   "reqd": 1,
+   "sort_options": 1
+  },
+  {
+   "fieldname": "submission_summary",
+   "fieldtype": "Small Text",
+   "label": "Submission Summary",
+   "read_only": 1
+  },
+  {
+   "fieldname": "demo_video",
+   "fieldtype": "Attach",
+   "label": "Demo Video",
+   "mandatory_depends_on": "eval:doc.day===\"4\""
+  },
+  {
+   "fieldname": "hashes",
+   "fieldtype": "Code",
+   "label": "Hashes",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "similarity_score",
+   "fieldtype": "Percent",
+   "label": "Similarity Score",
+   "read_only": 1
+  },
+  {
+   "fieldname": "similar_assignment",
+   "fieldtype": "Link",
+   "label": "Similar Assignment",
+   "options": "FF Assignment Submission",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "cloned_to_code_server",
+   "fieldtype": "Check",
+   "label": "Cloned to Code Server",
+   "no_copy": 1,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-01 18:13:01.354538",
+ "modified_by": "Administrator",
+ "module": "FF Assignment Portal",
+ "name": "FF Assignment Submission",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "LMS Student",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Gray",
+   "title": "Unchecked"
+  },
+  {
+   "color": "Green",
+   "title": "Passed"
+  },
+  {
+   "color": "Orange",
+   "title": "Check In Progress"
+  },
+  {
+   "color": "Red",
+   "title": "Failed"
+  }
+ ],
+ "track_changes": 1,
+ "track_seen": 1
+}
