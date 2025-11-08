@@ -1,0 +1,323 @@
+{% extends "templates/base.html" %}
+{% block title %}Frappe DataTable - A simple, modern datatable library for the web{% endblock %}
+{% block content %}
+{{ include_style('datatable.bundle.css') }}
+
+{{ web_blocks([
+		{
+			'template': "Hero",
+			'values': {
+				'title': "Fast, Feature Rich Javascript Datatable",
+				'subtitle': "A simple, modern and interactive datatable for the web",
+				'primary_action_label': "Documentation",
+				'primary_action': "/datatable/docs",
+				'secondary_action_label': 'GitHub',
+				'secondary_action': "https://github.com/frappe/datatable"
+			}
+		}
+	])
+}}
+
+<section class="section section-padding-top section-padding-bottom bg-light">
+	<div class='container'>
+		<div class="example-1"></div>
+		<p class="mt-2 text-center">Double click on any cell to edit values</p>
+	</div>
+</section>
+
+<section class="section section-padding-top section-padding-bottom">
+	<div class='container'>
+		<!-- Installation -->
+		<div class='mb-5'>
+			<h3>Installation</h3>
+			<pre><code class="hljs">yarn add frappe-datatable</code></pre>
+			<p>or include it directly in your HTML </p>
+			<pre><code class="hljs html xml">  &lt;script src="https://unpkg.com/frappe-datatable@latest"&gt;&lt;/script&gt;</code></pre>
+		</div>
+
+		<!-- Usage -->
+		<h3 class="mb-3">Usage</h3>
+
+		<p>And include it in your project</p>
+		<pre><code class="hljs javascript">  import DataTable from "frappe-datatable"</code></pre>
+
+		<p>Initialize a new DataTable Object</p>
+		<pre><code class="hljs javascript">let datatable = new DataTable({
+	columns: ['Name', 'Position', 'Department'],
+	data: [
+		['Tiger Nixon', 'System Architect', 'Tech'],
+		['Garrett Winters', 'Accountant', '']
+	]
+});</code></pre>
+	</div>
+</section>
+
+<section class="section section-padding-top section-padding-bottom bg-light">
+	<div class="container">
+		<h4>Simple Demo</h4>
+		<pre><code class="hljs javascript">let element = document.querySelector('.target');
+
+let datatabel = new DataTable(element, {
+	columns: ['Framework', 'Built By', 'GitHub Stars', 'License', 'Contributors', 'Age','Project Home', 'Project Link'],
+	data: [
+		['React', 'Facebook', 149017, 'MIT', 1385, '7 Years', 'https://reactjs.org', 'https://github.com/facebook/react'],
+		['Angular', 'Google', 61263, 'MIT', 1119, '5 Years', 'https://angular.io', 'https://github.com/angular/angular'],
+		['Vue', 'Evan You', 164408, 'MIT', 293, '4 Years', 'https://vuejs.org', 'https://github.com/vuejs/vue'],
+		['Svelte', 'Rich Harris', 33865, 'MIT', 298, '3 Years', 'https://svelte.dev', 'https://github.com/sveltejs/svelte/'],
+		['Stencil', 'Ionic Team', 7749, 'MIT', 132, '3 Years', 'https://stenciljs.com', 'https://github.com/ionic-team/stencil'],
+	]
+});</code></pre>
+	<div class="demo-target-1"></div>
+	</div>
+</div>
+</section>
+
+<section class="section section-padding-top section-padding-bottom">
+	<div class="container">
+		<h4>Formatting Column Values</h4>
+		<pre><code class="hljs javascript">let element = document.querySelector('.target');
+
+let datatabel = new DataTable(element, {
+	columns: [
+		{ name: 'Framework' },
+		{ name: 'Built By' },
+		{ name: 'GitHub Stars', format: value => `${value} ⭐️`},
+		{ name: 'License' },
+		{ name: 'Contributors' },
+		{ name: 'Age', format: value => `${value} Years` },
+		{ name: 'Project Home', format: value => `&lt;a class="text-primary" href="${value}"&gt;${value}&lt;/a&gt;` },
+		{ name: 'Project Link', format: value => `&lt;a class="text-primary" href="${value}"&gt;${value}&lt;/a&gt;` }
+	],
+	data: [
+		['React', 'Facebook', 149017, 'MIT', 1385, 7, 'https://reactjs.org', 'https://github.com/facebook/react'],
+		['Angular', 'Google', 61263, 'MIT', 1119, 5, 'https://angular.io', 'https://github.com/angular/angular'],
+		['Vue', 'Evan You', 164408, 'MIT', 293, 4, 'https://vuejs.org', 'https://github.com/vuejs/vue'],
+		['Svelte', 'Rich Harris', 33865, 'MIT', 298, 3, 'https://svelte.dev', 'https://github.com/sveltejs/svelte/'],
+		['Stencil', 'Ionic Team', 7749, 'MIT', 132, 3, 'https://stenciljs.com', 'https://github.com/ionic-team/stencil'],
+	]
+});</code></pre>
+	<div class="demo-target-2"></div>
+	</div>
+</div>
+</section>
+
+<section class="section section-padding-top section-padding-bottom bg-light">
+	<div class="container">
+		<h4>Tree View</h4>
+		<pre><code class="hljs javascript">let element = document.querySelector('.demo-target-3');
+let datatable = new DataTable(element, {
+	columns: [
+		{ name: 'Files', width: 300, format: formatFileName },
+		{ name: 'Size', width: 150, align: 'right' },
+		{ name: 'Last Updated', width: 200, align: 'right', default: "A Month Ago"},
+	],
+	data: [
+		{
+			'Files': 'Documents',
+			'Size': '2M',
+			'Last Updated': '',
+			'indent': 0
+		},
+		{
+			'Files': 'project.pdf',
+			'Size': '1M',
+			'Last Updated': 'Yesterday',
+			'indent': 1
+		},
+		{
+			'Files': 'my-face.png',
+			'Size': '500k',
+			'Last Updated': '2018-04-09',
+			'indent': 1
+		},
+		...
+	],
+	treeView: true
+});</code></pre>
+		<div class="demo-target-3"></div>
+	</div>
+</section>
+
+<div class="section-padding">
+	<div class="container">
+		<h3>Themes</h3>
+		<pre><code class="css">.dark-mode .datatable {
+	--dt-border-color: #424242;
+	--dt-light-bg: #2e3538;
+	--dt-text-color: #dfe2e5;
+	--dt-text-light: #dfe2e5;
+	--dt-cell-bg: #1c1f20;
+	--dt-focus-border-width: 1px;
+	--dt-selection-highlight-color: var(--dt-light-bg);
+	--dt-toast-message-border: 1px solid var(--dt-border-color);
+	--dt-header-cell-bg: #262c2e;
+}</code></pre>
+		<div class="demo-target-4"></div>
+		<div class="mt-2 btn-group theme-buttons" role="group" aria-label="Theme Buttons">
+			<button type="button" class="btn btn-default" data-theme="light">Light</button>
+			<button type="button" class="btn btn-default" data-theme="dark">Dark</button>
+		</div>
+		<template id="dark-theme-style-template">
+			<style id="dark-theme-style">
+				.demo-target-4 .datatable {
+					--dt-border-color: #424242;
+					--dt-light-bg: #2e3538;
+					--dt-text-color: #dfe2e5;
+					--dt-text-light: #dfe2e5;
+					--dt-cell-bg: #1c1f20;
+					--dt-focus-border-width: 1px;
+					--dt-selection-highlight-color: var(--dt-light-bg);
+					--dt-toast-message-border: 1px solid var(--dt-border-color);
+					--dt-header-cell-bg: #262c2e;
+				}
+			</style>
+		</template>
+		<style>
+			.demo-target-4 .code {
+				display: none;
+			}
+		</style>
+		<script>
+			frappe.ready(() => {
+
+				document.querySelector('.theme-buttons').addEventListener('click', e => {
+					const { theme } = e.target.dataset;
+
+					['light', 'dark'].forEach(t => {
+						const btn = document.querySelector(`[data-theme="${t}"]`);
+						if (theme === t) {
+							!btn.classList.contains('active') &&
+							btn.classList.add('active');
+						} else {
+							btn.classList.contains('active') &&
+							btn.classList.remove('active');
+						}
+					})
+
+					if (theme === 'dark') {
+						e.target.classList.add('active');
+						applyDarkTheme();
+					} else if (theme === 'light') {
+						removeDarkTheme();
+					}
+				});
+
+				setTimeout(() => {
+					document.querySelector('[data-theme=dark]').click();
+				}, 500);
+
+				function applyDarkTheme() {
+					const t = document.querySelector('#dark-theme-style-template');
+					const style = document.importNode(t.content, true);
+					document.head.appendChild(style);
+					style.onload = () => datatableThemed.setDimensions();
+				}
+
+				function removeDarkTheme() {
+					document.head.querySelector('#dark-theme-style').remove();
+					setTimeout(() => datatableThemed.setDimensions(), 100);
+				}
+			})
+		</script>
+	</div>
+</div>
+
+<section class="section section-padding-top section-padding-bottom bg-light">
+	<div class='container'>
+	<h3>List of configurable options</h3>
+	<div class="code">
+		<pre><code class="hljs javascript">{
+    columns: [],
+    data: [],
+    dropdownButton: '▼',
+    headerDropdown: [
+        {
+            label: 'Custom Action',
+            action: function (column) {
+                // custom action
+            }
+        }
+    ],
+    events: {
+        onRemoveColumn(column) {},
+        onSwitchColumn(column1, column2) {},
+        onSortColumn(column) {},
+        onCheckRow(row) {}
+    },
+    sortIndicator: {
+        asc: '↑',
+        desc: '↓',
+        none: ''
+    },
+    freezeMessage: '',
+    getEditor: null,
+    serialNoColumn: true,
+    checkboxColumn: false,
+    logs: false,
+    layout: 'fixed', // fixed, fluid, ratio
+    noDataMessage: 'No Data',
+    cellHeight: null,
+    inlineFilters: false,
+    treeView: false,
+    checkedRowStatus: true,
+    dynamicRowHeight: false,
+    pasteFromClipboard: false
+};
+</code></pre>
+	</div>
+	</div>
+	<div class='container'>
+		<h3>All Features</h3>
+		<div class="m-2 row">
+			<div class="col-12 col-md-4">
+				<li>Custom Formatters</li>
+				<li>Inline Editing</li>
+				<li>Mouse Selection</li>
+				<li>Copy Cells</li>
+				<li>Keyboard Navigation</li>
+				<li>Custom Cell Editor</li>
+			</div>
+			<div class="col-12 col-md-4">
+				<li>Reorder Columns</li>
+				<li>Sort by Column</li>
+				<li>Remove / Hide Column</li>
+				<li>Custom Actions</li>
+				<li>Resize Column</li>
+				<li>Flexible Layout</li>
+			</div>
+			<div class="col-12 col-md-4">
+				<li>Row Selection</li>
+				<li>Tree Structured Rows</li>
+				<li>Inline Filters</li>
+				<li>Large Number of Rows</li>
+				<li>Dynamic Row Height</li>
+				<li>Theme Support</li>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ web_blocks([
+		{
+			'template': "Section With CTA",
+			'values': {
+				'title': "Fast, Feature Rich Javascript Datatable",
+				'subtitle': "A simple, modern and interactive datatable for the web",
+				'cta_label': "Star on GitHub",
+				'cta_url': "https://github.com/frappe/datatable",
+				'cta_description': "MIT License",
+				'show_confetti': 1
+			}
+		}
+	])
+}}
+
+<style>
+	.dt-row-header {
+		border: none !important;
+	}
+</style>
+
+{{ include_script('datatable.bundle.js') }}
+<script src="/datatable/assets/index.js"></script>
+{% endblock %}

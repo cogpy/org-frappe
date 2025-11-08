@@ -1,0 +1,10 @@
+.DS_Store
+*.pyc
+*.egg-info
+*.swp
+tags
+.kdev4/
+*.kdev4
+__pycache__
+node_modules
+dist/
