@@ -113,6 +113,16 @@ To setup the repository locally follow the steps mentioned below:
 
 3. Open the URL `http://frappe.localhost:8000/app` in your browser, you should see the app running
 
+## Monorepo Integration
+
+This repository includes infrastructure to integrate 182 Frappe ecosystem repositories into a unified monorepo structure. To clone all repositories:
+
+```bash
+./clone-repositories.sh
+```
+
+This will clone all 182 repositories listed in `github.csv` into the `cloned-repos/` directory with `.git` directories removed for seamless integration. For more information, see [MONOREPO_INTEGRATION.md](MONOREPO_INTEGRATION.md).
+
 ## Learning and community
 
 1. [Frappe School](https://frappe.school) - Learn Frappe Framework and ERPNext from the various courses by the maintainers or from the community.
