@@ -1,0 +1,116 @@
+{
+ "actions": [],
+ "creation": "2020-11-08 15:36:33.201775",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "youtube",
+  "twitter",
+  "instagram",
+  "column_break_4",
+  "enable_cities",
+  "section_break_6",
+  "website_copy_section",
+  "privacy_policy",
+  "full_petition",
+  "report_an_frt_intro",
+  "sign_the_petition_intro",
+  "donate_pitch"
+ ],
+ "fields": [
+  {
+   "fieldname": "privacy_policy",
+   "fieldtype": "Markdown Editor",
+   "in_list_view": 1,
+   "label": "Privacy Policy",
+   "reqd": 1
+  },
+  {
+   "fieldname": "youtube",
+   "fieldtype": "Data",
+   "label": "Youtube "
+  },
+  {
+   "fieldname": "twitter",
+   "fieldtype": "Data",
+   "label": "Twitter"
+  },
+  {
+   "fieldname": "instagram",
+   "fieldtype": "Data",
+   "label": "Instagram"
+  },
+  {
+   "fieldname": "website_copy_section",
+   "fieldtype": "Section Break",
+   "label": "Website Copy"
+  },
+  {
+   "fieldname": "report_an_frt_intro",
+   "fieldtype": "Markdown Editor",
+   "label": "Report an FRT Intro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sign_the_petition_intro",
+   "fieldtype": "Markdown Editor",
+   "in_list_view": 1,
+   "label": "Sign the Petition Intro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "donate_pitch",
+   "fieldtype": "Markdown Editor",
+   "in_list_view": 1,
+   "label": "Donate Pitch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "full_petition",
+   "fieldtype": "Markdown Editor",
+   "label": "Full Petition"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break",
+   "label": "Feature Flags"
+  },
+  {
+   "default": "0",
+   "fieldname": "enable_cities",
+   "fieldtype": "Check",
+   "label": "Enable Cities",
+   "options": "false"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2023-02-15 16:56:27.764816",
+ "modified_by": "Administrator",
+ "module": "Panoptic",
+ "name": "Panoptic Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

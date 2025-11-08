@@ -1,0 +1,128 @@
+{% extends "templates/panoptic_base.html" %}
+
+{% block title %}Panoptic - Sign the Petition{% endblock %}
+
+{% block meta_block %}
+{% include "templates/includes/meta_block.html" %}
+{% endblock %}
+
+{% block content %}
+<section class="container border-b border-collapse">
+	{{ web_block(
+		"Title Section",
+		values={
+			"title": title,
+		},
+		add_container=0,
+		add_top_padding=0,
+		add_bottom_padding=0,
+	) }}
+	<div class="border-r border-l flex flex-wrap">
+		{% if submitted %}
+		<div class="max-w-lg mx-auto p-5 md:p-8 lg:p-12">
+			<h3>
+				Thank you for signing this petition.
+			</h3>
+			<p class="mt-3">
+				Panoptic is an initiative by the Internet Freedom Foundation.
+				You can help us scale up initiatives like these by making a donation for digital rights.
+			</p>
+			<p class="mt-3">
+				Become an IFF member to help sustain the fight for internet freedom.
+				We ask for your support to our corpus to fight in courts, legislative bodies and regulators for ordinary
+				Indian internet users like you.
+			</p>
+			<a class="mt-6 inline-block text-center px-5 py-3 rounded-sm bg-orange-500" target="_blank"
+				rel="noopener noreferrer" href="https://internetfreedom.in/donate">Donate
+				Now</a>
+		</div>
+		{% else %}
+		<div class="w-full md:w-1/2 border-r p-5 md:p-8 lg:p-12">
+			<div class="prose prose-md">
+				{{ frappe.utils.md_to_html(settings.sign_the_petition_intro) }}
+			</div>
+			<a class="mt-6 inline-block text-center px-5 py-3 rounded-sm bg-teal-blue-700 hover:bg-teal-blue-800"
+				href="/petition">Read
+				the Full Petition</a>
+		</div>
+		<div class="p-5 md:p-8 lg:p-12 w-full md:w-1/2 mb-5 md:mb-0">
+			<form name="petition-form" class="max-w-lg" method="POST" encType="multipart/form-data" class="p-12">
+				<label class="block">
+					<span class="text-white">Full Name</span>
+					<input name="full_name"
+						class="form-input bg-teal-blue-700 border-none text-teal-blue-200 mt-1 block w-full" required
+						placeholder="Sarah Connor">
+				</label>
+
+				<label class="block mt-6">
+					<span class="text-white">Your Email Address</span>
+					<input name="email"
+						class="form-input bg-teal-blue-700 border-none text-teal-blue-200 mt-1 block w-full" required
+						placeholder="sarah@skynet.com">
+				</label>
+
+				<label class="block mt-6">
+					<span class="text-white">Organization</span>
+					<input name="organization"
+						class="form-input bg-teal-blue-700 border-none text-teal-blue-200 mt-1 block w-full"
+						placeholder="Cyberdyne Systems">
+				</label>
+
+				<label class="block mt-6">
+					<span class="text-white">Designation</span>
+					<input name="designation"
+						class="form-input bg-teal-blue-700 border-none text-teal-blue-200 mt-1 block w-full"
+						placeholder="Terminator">
+				</label>
+
+				<label class="mt-6 hidden">
+					<input id="csrf_input_data" name="csrf_token" class="form-input" value="">
+				</label>
+
+				<div class="flex mt-6">
+					<label class="flex items-center">
+						<input type="checkbox" class="form-checkbox" required>
+						<span name="above_eighteen" class="ml-2">I am an Indian citizen above 18 years of age.</span>
+					</label>
+				</div>
+
+				<div class="flex mt-4">
+					<label class="flex items-center">
+						<input type="checkbox" class="form-checkbox" required>
+						<span name="agree_terms" class="ml-2">I agree to the <a href="/privacy-policy"
+								class="underline">privacy
+								policy</a></span>
+					</label>
+				</div>
+				<div class="flex mt-6">
+					<button class="px-5 py-3 rounded-sm bg-orange-500 w-full" type="button" onclick="submitForm()">Sign
+						the
+						Petition</button>
+				</div>
+			</form>
+		</div>
+		{% endif %}
+	</div>
+</section>
+{% endblock %}
+
+{% if not submitted %}
+{% block script %}
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		document.getElementById("csrf_input_data").value = frappe.csrf_token;
+	})
+
+	function submitForm() {
+		let frm = document.getElementsByName('petition-form')[0];
+		if (frm.checkValidity()) {
+			frm.submit(); // Submit the form
+			frm.reset();  // Reset all form data
+			return false; // Prevent page refresh
+		} else {
+			frm.reportValidity()
+		}
+	}
+</script>
+{% endblock %}
+{% endif %}
