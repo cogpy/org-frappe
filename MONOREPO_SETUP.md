@@ -4,9 +4,13 @@ This repository has been enhanced to support monorepo integration of 182 Frappe-
 
 ### Quick Start
 
-To clone all Frappe repositories into this monorepo:
+See [QUICKSTART.md](QUICKSTART.md) for a step-by-step guide, or run:
 
 ```bash
+# Validate setup
+./validate-monorepo-setup.sh
+
+# Clone all 182 repositories
 ./clone-repositories.sh
 ```
 
@@ -16,7 +20,10 @@ This will clone all 182 repositories listed in `github.csv` into the `cloned-rep
 
 - **182 repositories** from the Frappe ecosystem
 - Clone script with Git LFS support and parallel processing
-- Comprehensive documentation in `MONOREPO_INTEGRATION.md`
+- Validation script to verify setup
+- Comprehensive documentation:
+  - [QUICKSTART.md](QUICKSTART.md) - Quick start guide
+  - [MONOREPO_INTEGRATION.md](MONOREPO_INTEGRATION.md) - Full documentation
 - Repository list in `github.csv`
 
 ### Why This Approach?
@@ -25,11 +32,9 @@ Rather than committing ~3.7GB of code directly to git, we provide tooling to clo
 
 ### Learn More
 
-See [MONOREPO_INTEGRATION.md](MONOREPO_INTEGRATION.md) for complete documentation on the monorepo integration including:
-- Clone script usage
-- Customization options
-- Repository statistics
-- Maintenance procedures
+- **Quick Start**: [QUICKSTART.md](QUICKSTART.md)
+- **Full Documentation**: [MONOREPO_INTEGRATION.md](MONOREPO_INTEGRATION.md)
+- **Validation**: Run `./validate-monorepo-setup.sh`
 
 ---
 
