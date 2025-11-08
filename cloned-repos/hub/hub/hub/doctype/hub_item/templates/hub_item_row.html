@@ -1,0 +1,19 @@
+{% from 'templates/macros.html' import image_frame %}
+{% set size = '200px' %}
+
+{% if doc.published %}
+<div class="hub-item-wrapper" style="width: {{ size }};">
+	<a href={{ doc.route }}>
+		<div class="hub-item-image">
+			{{ image_frame(src=doc.image, title=doc.name, height=size) }}
+		</div>
+		<div class="hub-item-title">
+			<h5 class="bold">
+				{{ doc.name }}
+			<h5>
+		</div>
+	</a>
+	<div>{{ doc.company_name }}</div>
+	<div>{{ frappe.utils.fmt_money(doc.price, currency=doc.currency) }}</div>
+</div>
+{% endif %}

@@ -1,0 +1,11 @@
+{% extends "templates/base.html" %}
+
+{% block title %}Gameplan for {{ name }}{% endblock %}
+
+{% block content %}
+<div class="gameplan-container">
+	{% include "gameplan/templates/includes/back_to_discussions.html" %}
+
+	{% include "gameplan/templates/includes/discussion_list.html" %}
+</div>
+{% endblock %}

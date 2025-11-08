@@ -1,0 +1,87 @@
+<!-- title: Gameplan -->
+<!-- jinja -->
+<!-- no-cache -->
+
+<div class="gameplan-container">
+    <div class="search-wrapper">
+		<i class="octicon octicon-search"></i>
+        <form type="submit" action="/" method=GET>
+        <input class="form-control search" placeholder="Search" type="text" name="q" autocomplete="off" {% if frappe.form_dict.q %}value="{{ frappe.form_dict.q }}"{% endif %}>
+        </form>
+    </div>
+
+    <div class="new-discussion">
+        <form type="submit" action="/new" method=GET>
+        <input class="form-control new-discussion" placeholder="Start a new dicussion..." type="text" name="title" autocomplete="off">
+        </form>
+        <hr>
+    </div>
+
+    {% include "gameplan/templates/includes/discussion_list.html" %}
+
+	{% if frappe.form_dict.q %}
+	<p style="margin-top: 30px;">
+		<a href="/" class="text-muted">Filtered by "{{ frappe.form_dict.q }}". Clear</a></p>
+	{% endif %}
+
+</div>
+
+<script>
+frappe.ready(function() {
+    frappe.socket.init();
+    discussion_list.bind_events();
+
+    // auto-refresh
+	frappe.realtime.on("discussion_list_update", function(data) {
+        console.log(data);
+        frappe.call({
+            method: 'gameplan.api.refresh_discussion_list',
+            success: function(data) {
+                $('.discussion-list').replaceWith(data.message);
+                discussion_list.bind_events();
+            }
+        })
+    });
+
+});
+
+var discussion_list = {
+    bind_events: function() {
+        // hover
+        $(".discussion-list-item")
+            .on("mouseover", function() {
+                var $this = $(this);
+                if($this.attr("data-name")) {
+                    $this.find('.discussion-icon').addClass('hide');
+                    $this.find('.delete-item').removeClass('hide');
+                }
+            })
+            .on("mouseout", function() {
+                var $this = $(this);
+                if($this.attr("data-name")) {
+                    $this.find('.discussion-icon').addClass('hide');
+
+                    if($this.attr('data-unread')=='1') {
+                        $this.find('.unread').removeClass('hide');
+                    } else {
+                        $this.find('.timestamp').removeClass('hide');
+                    }
+                }
+            });
+
+        // delete
+        $('.delete-item').on('click', function() {
+            var $item = $(this).parent();
+            frappe.call({
+                method: 'gameplan.api.delete_discussion',
+                args: {
+                    name: $item.attr('data-name')
+                },
+                success: function() {
+                    $item.addClass("hide");
+                }
+            });
+        });
+    }
+}
+</script>

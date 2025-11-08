@@ -1,0 +1,50 @@
+{% from "templates/includes/user_circle.html" import user_circle %}
+
+{% macro comment_block(comment, title=None, editable=False) %}
+<div class="discussion-block {% if editable %}editable{% endif %}">
+    {{ user_circle(comment) }}
+    <div class="discussion-body">
+        {% if title %}
+            {% if editable %}
+            <input class="form-control new-discussion discussion-title"
+                placeholder="Start a new dicussion..."
+                type="text" name="title" autocomplete="off">
+            {% else %}
+            <h4 class="discussion-title">
+                {{ title }}
+            </h4>
+            {% endif %}
+        {% endif %}
+
+        <a class="text-muted user-link {{ 'no-title' if not title else '' }}" href="/{{ comment.username }}">
+            {{ comment.fullname }}</a>
+
+        {% if editable %}
+        <textarea class="form-control
+            new-discussion-content"
+            placeholder="Add to this discussion"></textarea>
+        <div class="discussion-thumb-list is-editable"></div>
+        <div class="discussion-help text-muted row">
+            <div class="col-xs-6">
+                Ctrl + Enter to post
+            </div>
+            <div class="col-xs-6 text-right">
+                Drop files here to attach
+            </div>
+        </div>
+        {% else %}
+        <div class="discussion-content">
+            {{ comment.content|markdown }}
+        </div>
+            {% if comment.attachments %}
+            <div class="discussion-thumb-list">
+                {% for a in comment.attachments %}
+                <div class="discussion-thumb"
+                    style='background-image: url("{{ a }}")'></div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}
