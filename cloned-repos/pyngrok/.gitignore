@@ -1,0 +1,13 @@
+.idea/
+*.iml
+*.pyc
+.coverage
+*.log
+venv
+dist/
+MANIFEST
+*.egg-info
+_build
+
+pyngrok/bin
+tests/.ngrok2
