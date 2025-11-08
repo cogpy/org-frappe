@@ -28,11 +28,11 @@ git lfs install 2>&1 | head -1
 echo ""
 
 # Extract repository list from CSV
-python3 << 'EOF' > /tmp/repos_list.txt
+python3 << EOF > /tmp/repos_list.txt
 import csv
 import sys
 
-csv_file = sys.argv[1] if len(sys.argv) > 1 else 'github.csv'
+csv_file = '$CSV_FILE'
 
 try:
     with open(csv_file, 'r', encoding='utf-8') as f:
@@ -74,18 +74,12 @@ export REPO_DIR
 
 # Clone repositories in parallel
 count=0
-success=0
-failed=0
 
 while IFS=$'\t' read -r url name; do
     count=$((count + 1))
     
     # Run clone in background
-    if clone_repo "$url" "$name" "$count" "$total_repos" "$REPO_DIR"; then
-        success=$((success + 1))
-    else
-        failed=$((failed + 1))
-    fi &
+    clone_repo "$url" "$name" "$count" "$total_repos" "$REPO_DIR" &
     
     # Wait after every batch
     if [ $((count % PARALLEL_JOBS)) -eq 0 ]; then
@@ -101,14 +95,14 @@ echo "============================================"
 echo "Cloning Complete!"
 echo "============================================"
 echo "Total repositories: $total_repos"
-echo "Successfully cloned: $success"
-echo "Failed: $failed"
 echo "Location: $REPO_DIR"
 echo ""
 
-# Calculate total size
+# Calculate total size and count successful clones
 if [ -d "$REPO_DIR" ]; then
     total_size=$(du -sh "$REPO_DIR" | cut -f1)
+    cloned_count=$(find "$REPO_DIR" -mindepth 1 -maxdepth 1 -type d | wc -l)
+    echo "Successfully cloned: $cloned_count repositories"
     echo "Total size: $total_size"
 fi
 

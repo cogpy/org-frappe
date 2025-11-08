@@ -13,6 +13,22 @@ Instead of committing all 182 repositories (approximately 3.7GB) directly into g
 
 ## Quick Start
 
+### Validate Setup
+
+Before cloning, verify that the monorepo integration setup is valid:
+
+```bash
+chmod +x validate-monorepo-setup.sh
+./validate-monorepo-setup.sh
+```
+
+This validation script checks:
+- CSV file integrity (182 repositories)
+- Clone script availability and syntax
+- Documentation files
+- Git and Python 3 availability
+- `.gitignore` configuration
+
 ### Clone All Repositories
 
 Run the provided script to clone all 182 repositories:
