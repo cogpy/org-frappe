@@ -1,0 +1,72 @@
+graph LR
+    subgraph "4E Cognition in Frappe Framework"
+        subgraph "EMBODIED Cognition"
+            E1[Document Lifecycle]
+            E2[State Transitions]
+            E3[Action-Perception Loops]
+            E4[Workflow States]
+            E5[Sensorimotor Gating via Permissions]
+        end
+        
+        subgraph "EMBEDDED Cognition"
+            EM1[Database as Scaffold]
+            EM2[Metadata Context]
+            EM3[Session Context]
+            EM4[Role-Based Situatedness]
+            EM5[Event-Driven Environment]
+        end
+        
+        subgraph "EXTENDED Cognition"
+            EX1[REST API Extension]
+            EX2[Cache as External Memory]
+            EX3[Background Jobs]
+            EX4[Client-Server Distribution]
+            EX5[Distributed Processing]
+        end
+        
+        subgraph "ENACTIVE Cognition"
+            EN1[Dynamic Workflow Transitions]
+            EN2[Enacted Permissions]
+            EN3[Assignment Rule Enaction]
+            EN4[Form Generation]
+            EN5[Sense-Making through Action]
+        end
+    end
+    
+    subgraph "Integration Points"
+        I1[Document Model]
+        I2[Workflow Engine]
+        I3[Permission System]
+        I4[Event Hooks]
+        I5[Context Management]
+    end
+    
+    E1 --> I1
+    E2 --> I2
+    E3 --> I4
+    E4 --> I2
+    E5 --> I3
+    
+    EM1 --> I1
+    EM2 --> I1
+    EM3 --> I5
+    EM4 --> I3
+    EM5 --> I4
+    
+    EX1 --> I1
+    EX2 --> I5
+    EX3 --> I4
+    EX4 --> I1
+    EX5 --> I4
+    
+    EN1 --> I2
+    EN2 --> I3
+    EN3 --> I4
+    EN4 --> I1
+    EN5 --> I2
+    
+    style E1 fill:#ffe1e1
+    style EM1 fill:#e1ffe1
+    style EX1 fill:#e1e1ff
+    style EN1 fill:#ffe1ff
+    style I1 fill:#fff4e1

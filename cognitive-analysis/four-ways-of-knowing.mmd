@@ -1,0 +1,62 @@
+graph TB
+    subgraph "Four Ways of Knowing - Frappe Assessment"
+        subgraph "PROCEDURAL Knowledge - Knowing How"
+            P1[✓ Workflow Procedures]
+            P2[✓ Automation Rules]
+            P3[✓ Event Handlers]
+            P4[✗ No Learning from Practice]
+            P5[✗ No Skill Refinement]
+            P_SCORE[Score: 6/10 - Strong but Static]
+        end
+        
+        subgraph "PROPOSITIONAL Knowledge - Knowing That"
+            PR1[✓ Metadata System]
+            PR2[✓ Database Schema]
+            PR3[✓ DocType Ontology]
+            PR4[✗ No Belief Revision]
+            PR5[✗ No Epistemic Humility]
+            PR_SCORE[Score: 7/10 - Rich but Fixed]
+        end
+        
+        subgraph "PERSPECTIVAL Knowledge - Knowing From"
+            PE1[✓ Role-Based Perspectives]
+            PE2[✓ Session Context]
+            PE3[✓ State-Dependent Views]
+            PE4[✗ No Dynamic Perspective Construction]
+            PE5[✗ No Perspective Transformation]
+            PE_SCORE[Score: 5/10 - Limited to Roles]
+        end
+        
+        subgraph "PARTICIPATORY Knowledge - Knowing With"
+            PA1[✗ No Co-Constitution]
+            PA2[✗ No Identity Transformation]
+            PA3[✗ No Shared Meaning-Making]
+            PA4[✗ No Mutual Transformation]
+            PA5[✗ Transactional not Participatory]
+            PA_SCORE[Score: 1/10 - Critically Absent]
+        end
+    end
+    
+    subgraph "Integration Assessment"
+        INT1[Procedural ↔ Propositional: Partial]
+        INT2[Propositional ↔ Perspectival: Weak]
+        INT3[Perspectival ↔ Participatory: Absent]
+        INT4[Overall Integration: 3/10]
+    end
+    
+    P_SCORE --> INT1
+    PR_SCORE --> INT1
+    PR_SCORE --> INT2
+    PE_SCORE --> INT2
+    PE_SCORE --> INT3
+    PA_SCORE --> INT3
+    
+    INT1 --> INT4
+    INT2 --> INT4
+    INT3 --> INT4
+    
+    style P_SCORE fill:#99ff99
+    style PR_SCORE fill:#99ff99
+    style PE_SCORE fill:#ffff99
+    style PA_SCORE fill:#ff9999
+    style INT4 fill:#ffcc99

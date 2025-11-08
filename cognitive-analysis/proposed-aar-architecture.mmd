@@ -1,0 +1,89 @@
+graph TB
+    subgraph "AAR Cognitive Architecture - Proposed"
+        subgraph "AGENT Layer - Urge to Act"
+            UA[User Agents]
+            AA[Automation Agents]
+            JA[Job Agents]
+            AI[AI Agents]
+            CA[Collective Agents]
+        end
+        
+        subgraph "RELATION Layer - Self/Mediator"
+            SELF[Self-Model]
+            REL[Relevance Engine]
+            ATT[Attention Mechanism]
+            WIS[Wisdom Cultivator]
+            OPP[Opponent Processor]
+            META_COG[Meta-Cognition]
+        end
+        
+        subgraph "ARENA Layer - Need to Be"
+            STATE[State Space]
+            DOC_SPACE[Document Arena]
+            WF_SPACE[Workflow Arena]
+            PERM_SPACE[Permission Arena]
+            KNOWLEDGE[Knowledge Base]
+        end
+        
+        subgraph "Learning & Adaptation"
+            EXP[Experience Memory]
+            JUDGE[Judgment Models]
+            REFLECT[Reflection Engine]
+            FEEDBACK[Feedback Loops]
+        end
+        
+        subgraph "4E Cognition Layers"
+            EMBOD[Embodied: State-Action Coupling]
+            EMBED[Embedded: Contextual Scaffolding]
+            EXTEND[Extended: Distributed Processing]
+            ENACT[Enactive: Participatory Meaning]
+        end
+    end
+    
+    %% Agent-Relation connections
+    UA --> REL
+    AA --> REL
+    JA --> REL
+    AI --> REL
+    CA --> REL
+    
+    %% Relation-Arena connections
+    REL --> STATE
+    REL --> DOC_SPACE
+    REL --> WF_SPACE
+    REL --> PERM_SPACE
+    REL --> KNOWLEDGE
+    
+    %% Relation internal dynamics
+    SELF -.-> REL
+    ATT -.-> REL
+    WIS -.-> REL
+    OPP -.-> REL
+    META_COG -.-> REL
+    
+    %% Learning loops
+    STATE --> EXP
+    EXP --> JUDGE
+    JUDGE --> REFLECT
+    REFLECT --> FEEDBACK
+    FEEDBACK --> WIS
+    FEEDBACK --> REL
+    
+    %% 4E integration
+    EMBOD -.-> STATE
+    EMBED -.-> PERM_SPACE
+    EXTEND -.-> JA
+    ENACT -.-> CA
+    
+    %% Bidirectional feedback
+    STATE -.feedback.-> UA
+    STATE -.feedback.-> AA
+    DOC_SPACE -.feedback.-> UA
+    WF_SPACE -.feedback.-> AA
+    
+    style SELF fill:#ff9999
+    style REL fill:#ffcc99
+    style WIS fill:#99ccff
+    style ATT fill:#99ff99
+    style META_COG fill:#cc99ff
+    style ENACT fill:#ffff99

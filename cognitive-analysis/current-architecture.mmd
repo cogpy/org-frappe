@@ -1,0 +1,70 @@
+graph TB
+    subgraph "Frappe Framework - Current Architecture"
+        subgraph "Presentation Layer"
+            UI[Web UI]
+            API[REST API]
+            WS[WebSocket/Realtime]
+        end
+        
+        subgraph "Application Layer"
+            DOC[Document Model]
+            WF[Workflow Engine]
+            PERM[Permission System]
+            AUTO[Automation Rules]
+            HOOKS[Event Hooks]
+        end
+        
+        subgraph "Data Layer"
+            META[Metadata System]
+            DB[(Database)]
+            CACHE[(Redis Cache)]
+            QUEUE[Job Queue]
+        end
+        
+        subgraph "Context Management"
+            LOCAL[frappe.local]
+            SESSION[Session Management]
+            USER[User Context]
+        end
+        
+        subgraph "Ecosystem"
+            ERP[ERPNext]
+            CRM[CRM]
+            HRMS[HRMS]
+            LMS[LMS]
+            BOOKS[Books]
+            OTHER[+177 Apps]
+        end
+    end
+    
+    UI --> DOC
+    API --> DOC
+    WS --> DOC
+    
+    DOC --> META
+    DOC --> DB
+    DOC --> WF
+    DOC --> PERM
+    
+    WF --> HOOKS
+    AUTO --> HOOKS
+    PERM --> LOCAL
+    
+    DOC --> CACHE
+    HOOKS --> QUEUE
+    
+    LOCAL --> SESSION
+    LOCAL --> USER
+    
+    ERP --> DOC
+    CRM --> DOC
+    HRMS --> DOC
+    LMS --> DOC
+    BOOKS --> DOC
+    OTHER --> DOC
+    
+    style DOC fill:#e1f5ff
+    style META fill:#e1f5ff
+    style WF fill:#fff4e1
+    style PERM fill:#ffe1e1
+    style LOCAL fill:#e1ffe1

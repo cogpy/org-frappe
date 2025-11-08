@@ -1,0 +1,90 @@
+graph TB
+    subgraph "Relevance Realization Analysis"
+        subgraph "Current Mechanisms - Rule-Based"
+            C1[Permission Filtering]
+            C2[Query Filtering]
+            C3[Assignment Rules]
+            C4[Workflow State Filtering]
+            C5[Search & Indexing]
+            C_TYPE[Type: Declarative Rules]
+        end
+        
+        subgraph "Missing Capabilities"
+            M1[✗ Adaptive Learning]
+            M2[✗ Attention Mechanisms]
+            M3[✗ Novelty Detection]
+            M4[✗ Context Sensitivity]
+            M5[✗ Opponent Processing]
+            M6[✗ Recursive Relevance]
+            M7[✗ Gradient Salience]
+            M8[✗ Predictive Relevance]
+        end
+        
+        subgraph "Required for True Relevance Realization"
+            R1[User Preference Learning]
+            R2[Contextual Embeddings]
+            R3[Attention Allocation]
+            R4[Anomaly Detection]
+            R5[Exploration-Exploitation Balance]
+            R6[Meta-Relevance Reasoning]
+            R7[Salience Scoring]
+            R8[Predictive Models]
+        end
+        
+        subgraph "Impact Assessment"
+            I1[Current: Binary Visible/Hidden]
+            I2[Needed: Gradient Salience]
+            I3[Current: Static Rules]
+            I4[Needed: Adaptive Policies]
+            I5[Current: No Learning]
+            I6[Needed: Experience-Based Refinement]
+            GAP[Relevance Realization Gap: CRITICAL]
+        end
+    end
+    
+    C1 --> C_TYPE
+    C2 --> C_TYPE
+    C3 --> C_TYPE
+    C4 --> C_TYPE
+    C5 --> C_TYPE
+    
+    C_TYPE -.lacks.-> M1
+    C_TYPE -.lacks.-> M2
+    C_TYPE -.lacks.-> M3
+    C_TYPE -.lacks.-> M4
+    C_TYPE -.lacks.-> M5
+    C_TYPE -.lacks.-> M6
+    C_TYPE -.lacks.-> M7
+    C_TYPE -.lacks.-> M8
+    
+    M1 -.requires.-> R1
+    M2 -.requires.-> R3
+    M3 -.requires.-> R4
+    M4 -.requires.-> R2
+    M5 -.requires.-> R5
+    M6 -.requires.-> R6
+    M7 -.requires.-> R7
+    M8 -.requires.-> R8
+    
+    I1 --> GAP
+    I3 --> GAP
+    I5 --> GAP
+    
+    style C_TYPE fill:#ffcccc
+    style GAP fill:#ff6666
+    style M1 fill:#ffeeee
+    style M2 fill:#ffeeee
+    style M3 fill:#ffeeee
+    style M4 fill:#ffeeee
+    style M5 fill:#ffeeee
+    style M6 fill:#ffeeee
+    style M7 fill:#ffeeee
+    style M8 fill:#ffeeee
+    style R1 fill:#ccffcc
+    style R2 fill:#ccffcc
+    style R3 fill:#ccffcc
+    style R4 fill:#ccffcc
+    style R5 fill:#ccffcc
+    style R6 fill:#ccffcc
+    style R7 fill:#ccffcc
+    style R8 fill:#ccffcc
