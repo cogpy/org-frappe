@@ -1,0 +1,554 @@
+/**
+ * Frappe Framework - System State Formal Specification (Z++)
+ * 
+ * This specification formalizes the overall system state of the Frappe Framework,
+ * including runtime state, sessions, cache, and global system configuration.
+ * 
+ * Based on:
+ * - frappe/__init__.py (local state)
+ * - frappe/sessions.py
+ * - frappe/auth.py
+ * - frappe/database/database.py
+ * - frappe/utils/redis_wrapper.py
+ */
+
+// Import data model definitions
+include "data_model.zpp"
+
+// ============================================================================
+// System Configuration
+// ============================================================================
+
+/**
+ * SystemConfiguration represents the global configuration from site_config.json
+ * and common_site_config.json
+ */
+schema SystemConfiguration
+  // Database configuration
+  db_name: seq Char
+  db_host: seq Char
+  db_port: ℤ
+  db_type: seq Char                  // mariadb, postgres, sqlite
+  
+  // Redis configuration
+  redis_cache: Option[seq Char]
+  redis_queue: Option[seq Char]
+  redis_socketio: Option[seq Char]
+  
+  // Application configuration
+  site_name: seq Char
+  encryption_key: seq Char
+  admin_password: Option[seq Char]
+  
+  // Feature flags
+  enable_scheduler: Bool
+  enable_email: Bool
+  enable_background_jobs: Bool
+  
+  // Limits and thresholds
+  max_file_size: ℤ
+  max_login_attempts: ℤ
+  session_expiry: ℤ                  // In seconds
+  
+  // Developer mode
+  developer_mode: Bool
+  log_queries: Bool
+where
+  db_port > 0 ∧ db_port < 65536
+  max_file_size > 0
+  max_login_attempts > 0
+  session_expiry > 0
+  db_type ∈ {"mariadb", "postgres", "sqlite"}
+
+// ============================================================================
+// Database Connection State
+// ============================================================================
+
+/**
+ * DatabaseConnection represents an active database connection.
+ */
+schema DatabaseConnection
+  host: seq Char
+  port: ℤ
+  database: seq Char
+  user: seq Char
+  connected: Bool
+  in_transaction: Bool
+  autocommit: Bool
+  
+  // Transaction state
+  savepoints: seq seq Char
+  transaction_depth: ℤ
+  
+  // Query tracking
+  last_query: Option[seq Char]
+  queries_executed: ℤ
+  
+  // Connection metadata
+  connection_id: ℤ
+  charset: seq Char
+  timezone: seq Char
+where
+  port > 0
+  transaction_depth ≥ 0
+  queries_executed ≥ 0
+  connection_id ≥ 0
+  
+  // In transaction implies not autocommit
+  in_transaction = true ⇒ autocommit = false
+  
+  // Transaction depth matches savepoint count
+  transaction_depth = #savepoints
+  
+  // Must be connected to have transaction
+  in_transaction = true ⇒ connected = true
+
+// ============================================================================
+// Session State
+// ============================================================================
+
+/**
+ * UserSession represents an authenticated user's session.
+ */
+schema UserSession
+  sid: seq Char                      // Session ID (unique)
+  user: UserName
+  user_type: seq Char                // System User, Website User
+  
+  // Session metadata
+  created_at: DateTime
+  last_accessed: DateTime
+  expires_at: DateTime
+  
+  // Session data
+  csrf_token: seq Char
+  device: seq Char
+  user_agent: seq Char
+  ip_address: seq Char
+  
+  // User context
+  roles: set RoleName
+  permissions: map[DocTypeName, set seq Char]  // DocType → permission set
+  defaults: map[seq Char, seq Char]             // Default values
+  
+  // Session flags
+  is_authenticated: Bool
+  two_factor_verified: Bool
+  impersonated_by: Option[UserName]
+  
+  // Language and locale
+  language: seq Char
+  time_zone: seq Char
+where
+  #sid = 32                          // Session IDs are 32 characters
+  #csrf_token = 32
+  
+  // Timestamps must be ordered
+  created_at ≤ last_accessed ≤ expires_at
+  
+  // Authenticated sessions must have verified user
+  is_authenticated = true ⇒ user ≠ "Guest"
+  
+  // Two-factor verification only for authenticated sessions
+  two_factor_verified = true ⇒ is_authenticated = true
+  
+  // Impersonation only for authenticated sessions
+  impersonated_by ≠ None ⇒ is_authenticated = true
+
+// ============================================================================
+// Cache State
+// ============================================================================
+
+/**
+ * CacheEntry represents a single cached value.
+ */
+schema CacheEntry[V]
+  key: seq Char
+  value: V
+  created_at: DateTime
+  expires_at: Option[DateTime]
+  ttl: Option[ℤ]                     // Time to live in seconds
+where
+  ttl = Some(t) ⇒ t > 0
+  expires_at = Some(exp) ⇒ exp > created_at
+
+/**
+ * CacheLayer represents a Redis-based cache layer.
+ */
+schema CacheLayer
+  // General cache
+  cache_entries: map[seq Char, CacheEntry[Any]]
+  
+  // Session cache
+  sessions: map[seq Char, UserSession]  // sid → session
+  
+  // DocType metadata cache
+  doctype_meta: map[DocTypeName, DocType]
+  
+  // User permissions cache
+  user_permissions: map[UserName, map[DocTypeName, set seq Char]]
+  
+  // Value cache (computed values)
+  value_cache: map[seq Char, Any]
+  
+  // Cache statistics
+  hits: ℤ
+  misses: ℤ
+  evictions: ℤ
+where
+  hits ≥ 0
+  misses ≥ 0
+  evictions ≥ 0
+  
+  // All sessions in cache must be valid
+  ∀ sid ∈ dom(sessions) · 
+    sessions[sid].sid = sid
+  
+  // Expired entries should be evicted
+  ∀ key ∈ dom(cache_entries) · 
+    cache_entries[key].expires_at = Some(exp) ⇒ 
+    exp > now()
+
+// ============================================================================
+// Request Context State
+// ============================================================================
+
+/**
+ * RequestContext represents the state for a single HTTP request.
+ */
+schema RequestContext
+  // Request information
+  method: seq Char                   // GET, POST, PUT, DELETE
+  path: seq Char
+  headers: map[seq Char, seq Char]
+  query_params: map[seq Char, seq Char]
+  form_data: map[seq Char, Any]
+  
+  // Session and user
+  session: UserSession
+  
+  // Request metadata
+  request_id: seq Char               // Unique request identifier
+  start_time: DateTime
+  ip_address: seq Char
+  
+  // Response preparation
+  response_status: ℤ
+  response_headers: map[seq Char, seq Char]
+  response_data: Option[Any]
+  
+  // Flags
+  flags: map[seq Char, Bool]
+  
+  // Messages and errors
+  messages: seq seq Char
+  errors: seq seq Char
+where
+  method ∈ {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}
+  200 ≤ response_status < 600
+  #request_id > 0
+  
+  // Safe methods should not have form data
+  method ∈ {"GET", "HEAD", "OPTIONS"} ⇒ #form_data = 0
+
+// ============================================================================
+// Background Job State
+// ============================================================================
+
+JobStatus ::= queued | started | finished | failed | deferred | scheduled
+
+/**
+ * BackgroundJob represents a background task in the queue.
+ */
+schema BackgroundJob
+  job_id: seq Char
+  job_name: seq Char
+  queue_name: seq Char               // default, short, long
+  
+  // Job parameters
+  method: seq Char
+  args: seq Any
+  kwargs: map[seq Char, Any]
+  
+  // Job status
+  status: JobStatus
+  enqueued_at: DateTime
+  started_at: Option[DateTime]
+  ended_at: Option[DateTime]
+  
+  // Job metadata
+  timeout: ℤ                         // Seconds
+  retry_count: ℤ
+  max_retries: ℤ
+  
+  // Result
+  result: Option[Any]
+  exception: Option[seq Char]
+  traceback: Option[seq Char]
+  
+  // Scheduling (for scheduled jobs)
+  scheduled_time: Option[DateTime]
+where
+  timeout > 0
+  retry_count ≥ 0
+  max_retries ≥ 0
+  retry_count ≤ max_retries
+  queue_name ∈ {"default", "short", "long"}
+  
+  // Started jobs have started_at timestamp
+  status ∈ {started, finished, failed} ⇒ started_at ≠ None
+  
+  // Finished jobs have ended_at timestamp
+  status ∈ {finished, failed} ⇒ ended_at ≠ None
+  
+  // Failed jobs have exception
+  status = failed ⇒ exception ≠ None
+  
+  // Finished jobs have result (unless failed)
+  status = finished ⇒ result ≠ None
+  
+  // Scheduled jobs have scheduled_time
+  status = scheduled ⇒ scheduled_time ≠ None
+  
+  // Timestamps must be ordered
+  (started_at = Some(st) ∧ ended_at = Some(et)) ⇒ 
+    enqueued_at ≤ st ≤ et
+
+// ============================================================================
+// Job Queue State
+// ============================================================================
+
+/**
+ * JobQueue represents a queue of background jobs.
+ */
+schema JobQueue
+  name: seq Char
+  jobs: seq BackgroundJob
+  max_queue_size: ℤ
+  workers: ℤ
+  active_jobs: set seq Char          // job_ids currently running
+where
+  max_queue_size > 0
+  workers > 0
+  #jobs ≤ max_queue_size
+  
+  // All active jobs are in started status
+  ∀ jid ∈ active_jobs · 
+    ∃ j ∈ jobs · j.job_id = jid ∧ j.status = started
+  
+  // Number of active jobs doesn't exceed workers
+  #active_jobs ≤ workers
+
+// ============================================================================
+// Global System State
+// ============================================================================
+
+/**
+ * SystemState represents the complete state of a Frappe instance.
+ */
+schema SystemState
+  // Configuration
+  config: SystemConfiguration
+  
+  // Database
+  db_connection: DatabaseConnection
+  data_integrity: DataIntegrity
+  
+  // Cache layer
+  cache: CacheLayer
+  
+  // Active sessions
+  active_sessions: map[seq Char, UserSession]  // sid → session
+  
+  // Current request contexts (one per active request)
+  request_contexts: map[seq Char, RequestContext]  // request_id → context
+  
+  // Background job queues
+  job_queues: map[seq Char, JobQueue]
+  
+  // System metadata
+  installed_apps: seq seq Char
+  app_hooks: map[seq Char, seq seq Char]  // hook_name → [methods]
+  
+  // Scheduler state
+  scheduled_events: map[seq Char, DateTime]  // event_name → next_run
+  
+  // Real-time / Socket.IO state
+  socketio_rooms: map[seq Char, set seq Char]  // room → set of session_ids
+  
+  // File storage state
+  uploaded_files: set seq Char       // Set of file paths
+  
+  // Search index state
+  search_index_updated: DateTime
+  
+  // System statistics
+  total_requests: ℤ
+  total_documents: ℤ
+  uptime: ℤ                          // Seconds since start
+where
+  // Database must be connected
+  db_connection.connected = true
+  
+  // Active sessions match cache
+  dom(active_sessions) = dom(cache.sessions)
+  ∀ sid ∈ dom(active_sessions) · 
+    active_sessions[sid] = cache.sessions[sid]
+  
+  // Each request context references a valid session
+  ∀ rid ∈ dom(request_contexts) · 
+    request_contexts[rid].session.sid ∈ dom(active_sessions)
+  
+  // Job queues have unique names
+  ∀ q1, q2 ∈ dom(job_queues) · 
+    q1 ≠ q2 ⇒ job_queues[q1].name ≠ job_queues[q2].name
+  
+  // Statistics are non-negative
+  total_requests ≥ 0
+  total_documents ≥ 0
+  uptime ≥ 0
+  
+  // App hooks reference installed apps
+  ∀ hook ∈ dom(app_hooks), method ∈ app_hooks[hook] · 
+    ∃ app ∈ installed_apps · method starts_with app
+  
+  // Socket.IO rooms contain valid sessions
+  ∀ room ∈ dom(socketio_rooms), sid ∈ socketio_rooms[room] · 
+    sid ∈ dom(active_sessions)
+
+// ============================================================================
+// Site Context (Multi-tenancy Support)
+// ============================================================================
+
+/**
+ * SiteContext represents a single site in a multi-site deployment.
+ */
+schema SiteContext
+  site_name: seq Char
+  system_state: SystemState
+  site_path: seq Char
+  
+  // Site-specific configuration
+  db_name: seq Char
+  
+  // Site status
+  active: Bool
+  maintenance_mode: Bool
+where
+  #site_name > 0
+  #site_path > 0
+  #db_name > 0
+  
+  // Site name must match system config
+  system_state.config.site_name = site_name
+  system_state.config.db_name = db_name
+
+/**
+ * MultiSiteState represents a multi-site deployment.
+ */
+schema MultiSiteState
+  sites: map[seq Char, SiteContext]  // site_name → site
+  default_site: Option[seq Char]
+where
+  // Default site must exist
+  default_site = Some(site) ⇒ site ∈ dom(sites)
+  
+  // Each site has unique database
+  ∀ s1, s2 ∈ dom(sites) · 
+    s1 ≠ s2 ⇒ 
+    sites[s1].db_name ≠ sites[s2].db_name
+
+// ============================================================================
+// State Invariants
+// ============================================================================
+
+/**
+ * SystemInvariants defines global invariants that must hold.
+ */
+schema SystemInvariants
+  state: SystemState
+where
+  // Database connection is alive
+  state.db_connection.connected = true
+  
+  // All sessions are not expired
+  ∀ sid ∈ dom(state.active_sessions) · 
+    state.active_sessions[sid].expires_at > now()
+  
+  // All active requests have valid sessions
+  ∀ rid ∈ dom(state.request_contexts) · 
+    state.request_contexts[rid].session.sid ∈ dom(state.active_sessions)
+  
+  // Job queue workers are not overloaded
+  ∀ qname ∈ dom(state.job_queues) · 
+    #state.job_queues[qname].active_jobs ≤ state.job_queues[qname].workers
+  
+  // Document integrity is maintained
+  state.data_integrity satisfied
+
+// ============================================================================
+// Transient State Tracking
+// ============================================================================
+
+/**
+ * TransactionState tracks the current transaction scope.
+ */
+schema TransactionState
+  in_transaction: Bool
+  savepoints: seq seq Char
+  affected_doctypes: set DocTypeName
+  dirty_documents: set Document
+  rollback_required: Bool
+where
+  // Dirty documents belong to affected doctypes
+  ∀ doc ∈ dirty_documents · 
+    doc.doctype ∈ affected_doctypes
+  
+  // Rollback can only be required in transaction
+  rollback_required = true ⇒ in_transaction = true
+
+// ============================================================================
+// Performance Monitoring State
+// ============================================================================
+
+/**
+ * PerformanceMetrics tracks system performance metrics.
+ */
+schema PerformanceMetrics
+  // Request metrics
+  avg_request_time: ℝ
+  max_request_time: ℝ
+  min_request_time: ℝ
+  
+  // Database metrics
+  total_queries: ℤ
+  avg_query_time: ℝ
+  slow_queries: ℤ
+  
+  // Cache metrics
+  cache_hit_rate: ℝ
+  
+  // Memory metrics
+  memory_used: ℤ                     // Bytes
+  memory_limit: ℤ
+  
+  // Active connections
+  active_db_connections: ℤ
+  active_http_connections: ℤ
+where
+  avg_request_time ≥ 0
+  max_request_time ≥ avg_request_time
+  min_request_time ≤ avg_request_time
+  total_queries ≥ 0
+  avg_query_time ≥ 0
+  slow_queries ≥ 0
+  0 ≤ cache_hit_rate ≤ 1
+  memory_used ≥ 0
+  memory_limit > 0
+  memory_used ≤ memory_limit
+  active_db_connections ≥ 0
+  active_http_connections ≥ 0
+
+// ============================================================================
+// End of System State Specification
+// ============================================================================

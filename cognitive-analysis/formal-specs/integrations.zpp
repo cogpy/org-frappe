@@ -1,0 +1,787 @@
+/**
+ * Frappe Framework - Integration Contracts Formal Specification (Z++)
+ * 
+ * This specification formalizes the external integration points and contracts
+ * for the Frappe Framework, including REST API, webhooks, email, OAuth, and
+ * third-party service integrations.
+ * 
+ * Based on:
+ * - frappe/api/v1.py, frappe/api/v2.py
+ * - frappe/integrations/
+ * - frappe/email/
+ * - frappe/oauth.py
+ */
+
+include "data_model.zpp"
+include "system_state.zpp"
+include "operations.zpp"
+
+// ============================================================================
+// REST API Contracts
+// ============================================================================
+
+HTTPMethod ::= GET | POST | PUT | DELETE | PATCH | HEAD | OPTIONS
+
+HTTPStatus ::= ok_200 | created_201 | no_content_204 | 
+               bad_request_400 | unauthorized_401 | forbidden_403 | 
+               not_found_404 | method_not_allowed_405 |
+               internal_error_500 | service_unavailable_503
+
+/**
+ * HTTPRequest represents an incoming HTTP request.
+ */
+schema HTTPRequest
+  method: HTTPMethod
+  path: seq Char
+  headers: map[seq Char, seq Char]
+  query_params: map[seq Char, seq Char]
+  body: Option[seq Char]
+  
+  // Authentication
+  auth_token: Option[seq Char]
+  session_cookie: Option[seq Char]
+  
+  // Request metadata
+  content_type: Option[seq Char]
+  accept: Option[seq Char]
+  user_agent: seq Char
+  ip_address: seq Char
+where
+  #path > 0
+  
+  // POST/PUT/PATCH should have content-type
+  method ∈ {POST, PUT, PATCH} ⇒ 
+    content_type ≠ None ∧ body ≠ None
+  
+  // Auth token or session cookie should be present (unless guest access)
+  auth_token ≠ None ∨ session_cookie ≠ None
+
+/**
+ * HTTPResponse represents an outgoing HTTP response.
+ */
+schema HTTPResponse
+  status: HTTPStatus
+  headers: map[seq Char, seq Char]
+  body: Option[seq Char]
+  
+  // Response metadata
+  content_type: seq Char
+  content_length: ℤ
+where
+  content_length ≥ 0
+  
+  // Body should match content length
+  body = Some(b) ⇒ #b = content_length
+  
+  // Success responses should have body (unless 204)
+  status ∈ {ok_200, created_201} ⇒ body ≠ None
+  
+  // No content response should not have body
+  status = no_content_204 ⇒ body = None
+
+// ============================================================================
+// REST API v1 Endpoints
+// ============================================================================
+
+/**
+ * APIv1_GetDocument: GET /api/v1/resource/:doctype/:name
+ */
+schema APIv1_GetDocument
+  ΞSystemState
+  request?: HTTPRequest
+  
+  // Output
+  response!: HTTPResponse
+where
+  request.method = GET
+  
+  // Parse path: /api/v1/resource/{doctype}/{name}
+  let path_parts = split(request.path, "/") in
+  path_parts[1] = "api" ∧
+  path_parts[2] = "v1" ∧
+  path_parts[3] = "resource" ∧
+  #path_parts = 5
+  
+  let doctype = path_parts[3] in
+  let name = path_parts[4] in
+  
+  // Authenticate request
+  let session = authenticate_request(request) in
+  
+  session.is_authenticated = true ⇒ (
+    // Check permissions
+    has_permission(session.user, doctype, "read") ⇒ (
+      // Get document
+      let doc = select_document(doctype, name) in
+      can_read_document(session.user, doc) ⇒ (
+        // Success response
+        response.status = ok_200 ∧
+        response.content_type = "application/json" ∧
+        response.body = Some(serialize_document(doc))
+      ) ∧
+      
+      ¬can_read_document(session.user, doc) ⇒ (
+        response.status = forbidden_403 ∧
+        response.body = Some('{"message": "Insufficient Permission"}')
+      )
+    ) ∧
+    
+    ¬has_permission(session.user, doctype, "read") ⇒ (
+      response.status = forbidden_403 ∧
+      response.body = Some('{"message": "Insufficient Permission"}')
+    )
+  ) ∧
+  
+  session.is_authenticated = false ⇒ (
+    response.status = unauthorized_401 ∧
+    response.body = Some('{"message": "Not Authorized"}')
+  )
+
+/**
+ * APIv1_CreateDocument: POST /api/v1/resource/:doctype
+ */
+schema APIv1_CreateDocument
+  ΔSystemState
+  request?: HTTPRequest
+  
+  // Output
+  response!: HTTPResponse
+where
+  request.method = POST
+  
+  // Parse path: /api/v1/resource/{doctype}
+  let path_parts = split(request.path, "/") in
+  path_parts[1] = "api" ∧
+  path_parts[2] = "v1" ∧
+  path_parts[3] = "resource" ∧
+  #path_parts = 4
+  
+  let doctype = path_parts[3] in
+  
+  // Authenticate request
+  let session = authenticate_request(request) in
+  
+  session.is_authenticated = true ⇒ (
+    // Parse request body
+    let field_values = parse_json(request.body) in
+    
+    // Check permissions
+    has_permission(session.user, doctype, "create") ⇒ (
+      // Create document
+      let create_op = CreateDocument with 
+        doctype = doctype,
+        field_values = field_values,
+        owner = session.user in
+      
+      create_op.success = true ⇒ (
+        response.status = created_201 ∧
+        response.content_type = "application/json" ∧
+        response.body = Some(serialize_document(create_op.document)) ∧
+        response.headers["Location"] = 
+          "/api/v1/resource/" + doctype + "/" + create_op.document.name
+      ) ∧
+      
+      create_op.success = false ⇒ (
+        response.status = bad_request_400 ∧
+        response.body = Some('{"message": "' + create_op.error + '"}')
+      )
+    ) ∧
+    
+    ¬has_permission(session.user, doctype, "create") ⇒ (
+      response.status = forbidden_403 ∧
+      response.body = Some('{"message": "Insufficient Permission"}')
+    )
+  ) ∧
+  
+  session.is_authenticated = false ⇒ (
+    response.status = unauthorized_401 ∧
+    response.body = Some('{"message": "Not Authorized"}')
+  )
+
+/**
+ * APIv1_UpdateDocument: PUT /api/v1/resource/:doctype/:name
+ */
+schema APIv1_UpdateDocument
+  ΔSystemState
+  request?: HTTPRequest
+  
+  // Output
+  response!: HTTPResponse
+where
+  request.method = PUT
+  
+  let path_parts = split(request.path, "/") in
+  let doctype = path_parts[3] in
+  let name = path_parts[4] in
+  
+  let session = authenticate_request(request) in
+  
+  session.is_authenticated = true ⇒ (
+    let field_values = parse_json(request.body) in
+    
+    has_permission(session.user, doctype, "write") ⇒ (
+      let update_op = UpdateDocument with 
+        doctype = doctype,
+        name = name,
+        field_values = field_values,
+        user = session.user in
+      
+      update_op.success = true ⇒ (
+        response.status = ok_200 ∧
+        response.body = Some(serialize_document(update_op.document))
+      ) ∧
+      
+      update_op.success = false ⇒ (
+        response.status = bad_request_400 ∧
+        response.body = Some('{"message": "' + update_op.error + '"}')
+      )
+    ) ∧
+    
+    ¬has_permission(session.user, doctype, "write") ⇒ (
+      response.status = forbidden_403
+    )
+  ) ∧
+  
+  session.is_authenticated = false ⇒ (
+    response.status = unauthorized_401
+  )
+
+/**
+ * APIv1_DeleteDocument: DELETE /api/v1/resource/:doctype/:name
+ */
+schema APIv1_DeleteDocument
+  ΔSystemState
+  request?: HTTPRequest
+  
+  // Output
+  response!: HTTPResponse
+where
+  request.method = DELETE
+  
+  let path_parts = split(request.path, "/") in
+  let doctype = path_parts[3] in
+  let name = path_parts[4] in
+  
+  let session = authenticate_request(request) in
+  
+  session.is_authenticated = true ⇒ (
+    has_permission(session.user, doctype, "delete") ⇒ (
+      let delete_op = DeleteDocument with 
+        doctype = doctype,
+        name = name,
+        user = session.user in
+      
+      delete_op.success = true ⇒ (
+        response.status = no_content_204
+      ) ∧
+      
+      delete_op.success = false ⇒ (
+        response.status = bad_request_400 ∧
+        response.body = Some('{"message": "' + delete_op.error + '"}')
+      )
+    ) ∧
+    
+    ¬has_permission(session.user, doctype, "delete") ⇒ (
+      response.status = forbidden_403
+    )
+  ) ∧
+  
+  session.is_authenticated = false ⇒ (
+    response.status = unauthorized_401
+  )
+
+/**
+ * APIv1_ListDocuments: GET /api/v1/resource/:doctype
+ */
+schema APIv1_ListDocuments
+  ΞSystemState
+  request?: HTTPRequest
+  
+  // Output
+  response!: HTTPResponse
+where
+  request.method = GET
+  
+  let path_parts = split(request.path, "/") in
+  let doctype = path_parts[3] in
+  
+  // Parse query parameters
+  let fields = parse_fields(request.query_params.get("fields", '["name"]')) in
+  let filters = parse_filters(request.query_params.get("filters", "{}")) in
+  let limit_start = parse_int(request.query_params.get("limit_start", "0")) in
+  let limit_page_length = parse_int(request.query_params.get("limit_page_length", "20")) in
+  let order_by = request.query_params.get("order_by", None) in
+  
+  let session = authenticate_request(request) in
+  
+  session.is_authenticated = true ⇒ (
+    has_permission(session.user, doctype, "read") ⇒ (
+      let list_op = GetList with 
+        doctype = doctype,
+        fields = fields,
+        filters = filters,
+        order_by = order_by,
+        limit_start = limit_start,
+        limit_page_length = limit_page_length,
+        user = session.user in
+      
+      response.status = ok_200 ∧
+      response.content_type = "application/json" ∧
+      response.body = Some(serialize_query_result(list_op.result))
+    ) ∧
+    
+    ¬has_permission(session.user, doctype, "read") ⇒ (
+      response.status = forbidden_403
+    )
+  ) ∧
+  
+  session.is_authenticated = false ⇒ (
+    response.status = unauthorized_401
+  )
+
+/**
+ * APIv1_CallMethod: POST /api/v1/method/:method_name
+ */
+schema APIv1_CallMethod
+  ΔSystemState
+  request?: HTTPRequest
+  
+  // Output
+  response!: HTTPResponse
+where
+  request.method = POST
+  
+  let path_parts = split(request.path, "/") in
+  let method_name = join(drop(4, path_parts), ".") in
+  
+  let session = authenticate_request(request) in
+  
+  session.is_authenticated = true ∨ allow_guest_access(method_name) ⇒ (
+    is_whitelisted(method_name) ⇒ (
+      let params = parse_json(request.body) in
+      
+      let api_call = APICall with 
+        method_name = method_name,
+        args = params.get("args", []),
+        kwargs = params.get("kwargs", {}),
+        user = session.user in
+      
+      api_call.success = true ⇒ (
+        response.status = ok_200 ∧
+        response.content_type = "application/json" ∧
+        response.body = Some('{"message": ' + serialize(api_call.result) + '}')
+      ) ∧
+      
+      api_call.success = false ⇒ (
+        response.status = internal_error_500 ∧
+        response.body = Some('{"exc": "' + api_call.error + '"}')
+      )
+    ) ∧
+    
+    ¬is_whitelisted(method_name) ⇒ (
+      response.status = forbidden_403 ∧
+      response.body = Some('{"message": "Method not whitelisted"}')
+    )
+  ) ∧
+  
+  ¬(session.is_authenticated ∨ allow_guest_access(method_name)) ⇒ (
+    response.status = unauthorized_401
+  )
+
+// ============================================================================
+// Webhook Integration
+// ============================================================================
+
+WebhookEvent ::= on_update | on_submit | on_cancel | on_delete | on_change
+
+/**
+ * Webhook represents an outbound webhook configuration.
+ */
+schema Webhook
+  name: seq Char
+  webhook_doctype: DocTypeName
+  webhook_docevent: WebhookEvent
+  request_url: seq Char
+  
+  // Authentication
+  webhook_headers: seq map[seq Char, seq Char]
+  
+  // Filters
+  condition: Option[seq Char]         // Python condition
+  
+  // Status
+  enabled: Bool
+  
+  // Request structure
+  request_structure: seq Char         // JSON template
+where
+  #request_url > 0
+  enabled = true ⇒ is_valid_url(request_url)
+
+/**
+ * SendWebhook sends a webhook notification to an external service.
+ */
+schema SendWebhook
+  ΞSystemState
+  webhook?: Webhook
+  document?: Document
+  
+  // Output
+  response!: HTTPResponse
+  success!: Bool
+where
+  // Pre-condition: Webhook is enabled
+  webhook.enabled = true
+  
+  // Pre-condition: Document matches webhook doctype
+  document.doctype = webhook.webhook_doctype
+  
+  // Pre-condition: Condition is satisfied (if specified)
+  webhook.condition = Some(cond) ⇒ 
+    evaluate_condition(cond, document) = true
+  
+  success = true ⇒ (
+    // Prepare webhook payload
+    let payload = render_template(webhook.request_structure, document) in
+    
+    // Make HTTP request
+    let http_req = HTTPRequest with
+      method = POST,
+      path = webhook.request_url,
+      headers = webhook.webhook_headers,
+      body = Some(payload),
+      content_type = Some("application/json") in
+    
+    // Send request and get response
+    response = send_http_request(http_req) ∧
+    response.status ∈ {ok_200, created_201, no_content_204}
+  )
+  
+  success = false ⇒ (
+    response.status ∉ {ok_200, created_201, no_content_204}
+  )
+
+// ============================================================================
+// Email Integration
+// ============================================================================
+
+/**
+ * EmailAccount represents an SMTP/IMAP email account configuration.
+ */
+schema EmailAccount
+  name: seq Char
+  email_id: seq Char
+  
+  // SMTP settings
+  smtp_server: seq Char
+  smtp_port: ℤ
+  use_tls: Bool
+  use_ssl: Bool
+  smtp_username: seq Char
+  smtp_password: seq Char
+  
+  // IMAP settings (for receiving)
+  enable_incoming: Bool
+  imap_server: Option[seq Char]
+  imap_port: Option[ℤ]
+  
+  // Configuration
+  default_outgoing: Bool
+  append_to: Option[DocTypeName]     // Append incoming emails to DocType
+  
+  // Status
+  enabled: Bool
+where
+  1 ≤ smtp_port < 65536
+  use_tls = true ⇒ use_ssl = false   // TLS and SSL are mutually exclusive
+  
+  enable_incoming = true ⇒ 
+    imap_server ≠ None ∧ imap_port ≠ None
+  
+  imap_port = Some(port) ⇒ 1 ≤ port < 65536
+
+/**
+ * Email represents an email message.
+ */
+schema Email
+  sender: seq Char
+  recipients: seq seq Char
+  cc: seq seq Char
+  bcc: seq seq Char
+  subject: seq Char
+  content: seq Char
+  content_type: seq Char             // text/plain or text/html
+  
+  // Attachments
+  attachments: seq map[seq Char, Any]
+  
+  // References
+  reference_doctype: Option[DocTypeName]
+  reference_name: Option[seq Char]
+  
+  // Status
+  sent: Bool
+  sent_at: Option[DateTime]
+  
+  // Email account
+  email_account: seq Char
+where
+  #recipients > 0
+  content_type ∈ {"text/plain", "text/html"}
+  
+  sent = true ⇒ sent_at ≠ None
+
+/**
+ * SendEmail sends an email message.
+ */
+schema SendEmail
+  ΞSystemState
+  email?: Email
+  account?: EmailAccount
+  
+  // Output
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Email account is enabled
+  account.enabled = true
+  
+  // Pre-condition: Valid recipients
+  ∀ recipient ∈ email.recipients · 
+    is_valid_email(recipient)
+  
+  success = true ⇒ (
+    // Connect to SMTP server
+    let smtp_conn = connect_smtp(
+      account.smtp_server, 
+      account.smtp_port, 
+      account.use_tls,
+      account.use_ssl
+    ) in
+    
+    // Authenticate
+    authenticate_smtp(smtp_conn, account.smtp_username, account.smtp_password) ∧
+    
+    // Send message
+    send_message(smtp_conn, email) ∧
+    
+    // Update email status
+    email.sent = true ∧
+    email.sent_at = Some(now())
+  )
+  
+  success = false ⇒ (
+    error ≠ None
+  )
+
+// ============================================================================
+// OAuth Integration
+// ============================================================================
+
+OAuthProvider ::= google | facebook | github | custom
+
+/**
+ * OAuthClient represents an OAuth application registration.
+ */
+schema OAuthClient
+  name: seq Char
+  provider: OAuthProvider
+  
+  // OAuth credentials
+  client_id: seq Char
+  client_secret: seq Char
+  
+  // OAuth endpoints
+  authorization_endpoint: seq Char
+  token_endpoint: seq Char
+  userinfo_endpoint: seq Char
+  
+  // Configuration
+  scopes: seq seq Char
+  redirect_uri: seq Char
+where
+  #client_id > 0
+  #client_secret > 0
+  is_valid_url(authorization_endpoint)
+  is_valid_url(token_endpoint)
+  is_valid_url(redirect_uri)
+
+/**
+ * OAuthToken represents an OAuth access token.
+ */
+schema OAuthToken
+  access_token: seq Char
+  token_type: seq Char               // Bearer, etc.
+  expires_in: ℤ
+  refresh_token: Option[seq Char]
+  scope: seq seq Char
+  
+  // Metadata
+  issued_at: DateTime
+  user: UserName
+where
+  expires_in > 0
+  token_type = "Bearer"
+
+/**
+ * OAuthAuthorize initiates OAuth authorization flow.
+ */
+schema OAuthAuthorize
+  ΞSystemState
+  client?: OAuthClient
+  user?: UserName
+  state?: seq Char                   // CSRF protection
+  
+  // Output
+  authorization_url!: seq Char
+where
+  // Build authorization URL
+  let params = {
+    "client_id" ↦ client.client_id,
+    "redirect_uri" ↦ client.redirect_uri,
+    "scope" ↦ join(client.scopes, " "),
+    "state" ↦ state,
+    "response_type" ↦ "code"
+  } in
+  
+  authorization_url = client.authorization_endpoint + "?" + urlencode(params)
+
+/**
+ * OAuthCallback handles OAuth callback and exchanges code for token.
+ */
+schema OAuthCallback
+  ΔSystemState
+  client?: OAuthClient
+  authorization_code?: seq Char
+  state?: seq Char
+  
+  // Output
+  token!: Option[OAuthToken]
+  user!: Option[UserName]
+  success!: Bool
+  error!: Option[seq Char]
+where
+  success = true ⇒ (
+    // Exchange authorization code for access token
+    let token_request = HTTPRequest with
+      method = POST,
+      path = client.token_endpoint,
+      body = Some(urlencode({
+        "grant_type" ↦ "authorization_code",
+        "code" ↦ authorization_code,
+        "redirect_uri" ↦ client.redirect_uri,
+        "client_id" ↦ client.client_id,
+        "client_secret" ↦ client.client_secret
+      })) in
+    
+    let token_response = send_http_request(token_request) in
+    token_response.status = ok_200 ∧
+    
+    // Parse token from response
+    token = Some(parse_oauth_token(token_response.body)) ∧
+    
+    // Get user info
+    let userinfo_request = HTTPRequest with
+      method = GET,
+      path = client.userinfo_endpoint,
+      headers = {"Authorization" ↦ "Bearer " + token.access_token} in
+    
+    let userinfo_response = send_http_request(userinfo_request) in
+    user = Some(extract_user_from_userinfo(userinfo_response.body))
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    token = None ∧
+    user = None
+  )
+
+// ============================================================================
+// External API Integration
+// ============================================================================
+
+/**
+ * ExternalAPICall represents a call to an external API.
+ */
+schema ExternalAPICall
+  ΞSystemState
+  url?: seq Char
+  method?: HTTPMethod
+  headers?: map[seq Char, seq Char]
+  params?: map[seq Char, seq Char]
+  body?: Option[seq Char]
+  timeout?: ℤ
+  
+  // Output
+  response!: HTTPResponse
+  success!: Bool
+  error!: Option[seq Char]
+where
+  is_valid_url(url)
+  timeout > 0
+  
+  success = true ⇒ (
+    let request = HTTPRequest with
+      method = method,
+      path = url,
+      headers = headers,
+      query_params = params,
+      body = body in
+    
+    response = send_http_request(request) ∧
+    response.status ∈ {ok_200, created_201, no_content_204}
+  )
+  
+  success = false ⇒ (
+    error ≠ None
+  )
+
+// ============================================================================
+// Real-time Socket.IO Integration
+// ============================================================================
+
+SocketIOEvent ::= doc_update | doc_delete | notification | message
+
+/**
+ * EmitSocketIOEvent emits a real-time event to connected clients.
+ */
+schema EmitSocketIOEvent
+  ΔSystemState
+  event_type?: SocketIOEvent
+  room?: seq Char
+  data?: Any
+where
+  // Room exists
+  room ∈ dom(SystemState.socketio_rooms)
+  
+  // Broadcast to all clients in room
+  ∀ sid ∈ SystemState.socketio_rooms[room] · 
+    send_to_client(sid, event_type, data)
+
+// ============================================================================
+// Helper Functions (Abstract)
+// ============================================================================
+
+function authenticate_request(req: HTTPRequest): UserSession
+function serialize_document(doc: Document): seq Char
+function serialize_query_result(result: QueryResult): seq Char
+function parse_json(json: Option[seq Char]): Any
+function parse_fields(fields_json: seq Char): seq FieldName
+function parse_filters(filters_json: seq Char): map[FieldName, Any]
+function parse_int(s: seq Char): ℤ
+function is_valid_url(url: seq Char): Bool
+function is_valid_email(email: seq Char): Bool
+function send_http_request(req: HTTPRequest): HTTPResponse
+function connect_smtp(server: seq Char, port: ℤ, tls: Bool, ssl: Bool): Any
+function authenticate_smtp(conn: Any, username: seq Char, password: seq Char): Bool
+function send_message(conn: Any, email: Email): Bool
+function urlencode(params: map[seq Char, seq Char]): seq Char
+function parse_oauth_token(json: Option[seq Char]): OAuthToken
+function extract_user_from_userinfo(json: Option[seq Char]): UserName
+function send_to_client(sid: seq Char, event: SocketIOEvent, data: Any): Bool
+function evaluate_condition(condition: seq Char, doc: Document): Bool
+function render_template(template: seq Char, doc: Document): seq Char
+
+// ============================================================================
+// End of Integration Contracts Specification
+// ============================================================================
