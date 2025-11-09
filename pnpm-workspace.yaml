@@ -1,0 +1,10 @@
+packages:
+  - 'packages/core/*'
+  - 'packages/apps/*'
+  - 'packages/libs/*'
+  - 'packages/integrations/*'
+  - 'packages/tools/*'
+  - 'packages/infrastructure/*'
+  - 'packages/docs/*'
+  - 'packages/regional/*'
+  - 'packages/utilities/*'
