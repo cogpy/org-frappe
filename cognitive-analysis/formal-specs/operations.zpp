@@ -1,0 +1,772 @@
+/**
+ * Frappe Framework - Operations Formal Specification (Z++)
+ * 
+ * This specification formalizes the core operations in the Frappe Framework,
+ * including document operations, authentication, API calls, and system operations.
+ * 
+ * Based on:
+ * - frappe/model/document.py
+ * - frappe/auth.py
+ * - frappe/api/__init__.py
+ * - frappe/handler.py
+ * - frappe/database/database.py
+ */
+
+include "data_model.zpp"
+include "system_state.zpp"
+
+// ============================================================================
+// Authentication Operations
+// ============================================================================
+
+/**
+ * Login operation authenticates a user and creates a session.
+ */
+schema Login
+  ΔSystemState
+  username?: UserName
+  password?: seq Char
+  otp?: seq Char
+  device?: seq Char
+  ip_address?: seq Char
+  
+  // Output
+  session!: UserSession
+  success!: Bool
+  error_message!: Option[seq Char]
+where
+  #password ≤ 512                    // Max password size
+  
+  // Pre-condition: User exists in system
+  ∃ user_doc: Document · 
+    user_doc.doctype = "User" ∧ 
+    user_doc.field_values["email"] = username
+  
+  // Check if 2FA is required
+  let user_doc = select_document("User", username) in
+  let requires_2fa = user_doc.field_values.get("two_factor_auth", false) in
+  
+  success = true ⇒ (
+    // Password must be valid
+    verify_password(username, password) ∧
+    
+    // If 2FA required, OTP must be valid
+    (requires_2fa ⇒ otp ≠ None ∧ verify_otp(username, otp)) ∧
+    
+    // Session is created
+    session.sid ∉ dom(SystemState.active_sessions) ∧
+    session.user = username ∧
+    session.is_authenticated = true ∧
+    session.two_factor_verified = (¬requires_2fa ∨ otp ≠ None) ∧
+    session.created_at = now() ∧
+    session.last_accessed = now() ∧
+    session.expires_at = now() + SystemState.config.session_expiry ∧
+    session.ip_address = ip_address ∧
+    session.device = device ∧
+    
+    // Session added to active sessions
+    SystemState'.active_sessions = 
+      SystemState.active_sessions ⊕ {session.sid ↦ session} ∧
+    
+    // Session cached
+    SystemState'.cache.sessions = 
+      SystemState.cache.sessions ⊕ {session.sid ↦ session}
+  )
+  
+  success = false ⇒ (
+    error_message ≠ None ∧
+    SystemState' = SystemState
+  )
+
+/**
+ * Logout operation terminates a user session.
+ */
+schema Logout
+  ΔSystemState
+  session_id?: seq Char
+  
+  // Output
+  success!: Bool
+where
+  // Pre-condition: Session exists
+  session_id ∈ dom(SystemState.active_sessions)
+  
+  success = true ⇒ (
+    // Remove session from active sessions
+    SystemState'.active_sessions = 
+      SystemState.active_sessions \ {session_id} ∧
+    
+    // Remove from cache
+    SystemState'.cache.sessions = 
+      SystemState.cache.sessions \ {session_id} ∧
+    
+    // Close any socket.io connections for this session
+    SystemState'.socketio_rooms = {
+      room ↦ (SystemState.socketio_rooms[room] \ {session_id})
+      | room ∈ dom(SystemState.socketio_rooms)
+    }
+  )
+
+/**
+ * ValidateSession checks if a session is valid and updates last access time.
+ */
+schema ValidateSession
+  ΔSystemState
+  session_id?: seq Char
+  
+  // Output
+  valid!: Bool
+  session!: Option[UserSession]
+where
+  valid = true ⇔ (
+    session_id ∈ dom(SystemState.active_sessions) ∧
+    SystemState.active_sessions[session_id].expires_at > now()
+  )
+  
+  valid = true ⇒ (
+    session = Some(SystemState.active_sessions[session_id]) ∧
+    
+    // Update last accessed time
+    let old_session = SystemState.active_sessions[session_id] in
+    let updated_session = old_session with last_accessed = now() in
+    SystemState'.active_sessions = 
+      SystemState.active_sessions ⊕ {session_id ↦ updated_session}
+  )
+  
+  valid = false ⇒ (
+    session = None ∧
+    SystemState' = SystemState
+  )
+
+// ============================================================================
+// Document CRUD Operations
+// ============================================================================
+
+/**
+ * CreateDocument creates a new document instance.
+ */
+schema CreateDocument
+  ΔSystemState
+  doctype?: DocTypeName
+  field_values?: map[FieldName, Any]
+  owner?: UserName
+  
+  // Output
+  document!: Document
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: DocType exists
+  ∃ dt ∈ SystemState.data_integrity.all_doctypes · dt.name = doctype
+  
+  // Pre-condition: User has create permission
+  let meta = get_meta(doctype) in
+  has_permission(owner, doctype, "create")
+  
+  success = true ⇒ (
+    // Document is properly initialized
+    document.doctype = doctype ∧
+    document.owner = owner ∧
+    document.creation = now() ∧
+    document.modified = now() ∧
+    document.modified_by = owner ∧
+    document.docstatus = draft ∧
+    document.idx = 0 ∧
+    
+    // Field values are validated
+    ∀ fname ∈ dom(field_values) · 
+      ∃ f ∈ document.meta.fields · 
+        f.fieldname = fname ∧ 
+        validate_field_value(f, field_values[fname]) ∧
+    
+    // Required fields are present
+    ∀ f ∈ document.meta.fields · 
+      f.required = true ⇒ 
+        fname ∈ dom(field_values) ∨ f.default_value ≠ None ∧
+    
+    // Document name is generated according to naming rule
+    document.name = generate_name(doctype, field_values) ∧
+    
+    // Document doesn't already exist
+    ¬∃ d ∈ SystemState.data_integrity.all_documents · 
+      d.doctype = doctype ∧ d.name = document.name ∧
+    
+    // Add to system state
+    SystemState'.data_integrity.all_documents = 
+      SystemState.data_integrity.all_documents ∪ {document} ∧
+    
+    // Update document count
+    SystemState'.total_documents = SystemState.total_documents + 1
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    SystemState' = SystemState
+  )
+
+/**
+ * GetDocument retrieves a document from the database.
+ */
+schema GetDocument
+  ΞSystemState                       // Read-only operation
+  doctype?: DocTypeName
+  name?: seq Char
+  user?: UserName
+  for_update?: Bool
+  
+  // Output
+  document!: Option[Document]
+  error!: Option[seq Char]
+where
+  // Pre-condition: User has read permission
+  has_permission(user, doctype, "read")
+  
+  document = Some(doc) ⇒ (
+    // Document exists with given doctype and name
+    doc ∈ SystemState.data_integrity.all_documents ∧
+    doc.doctype = doctype ∧
+    doc.name = name ∧
+    
+    // User can access this specific document
+    can_read_document(user, doc)
+  )
+  
+  document = None ⇒ (
+    // Document doesn't exist or user doesn't have access
+    (¬∃ d ∈ SystemState.data_integrity.all_documents · 
+      d.doctype = doctype ∧ d.name = name) ∨
+    ¬can_read_document(user, select_document(doctype, name))
+  )
+  
+  for_update = true ⇒ (
+    // Lock document for update (database row lock)
+    // This is enforced at database level
+    true
+  )
+
+/**
+ * UpdateDocument modifies an existing document.
+ */
+schema UpdateDocument
+  ΔSystemState
+  doctype?: DocTypeName
+  name?: seq Char
+  field_values?: map[FieldName, Any]
+  user?: UserName
+  
+  // Output
+  document!: Document
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Document exists
+  ∃ old_doc ∈ SystemState.data_integrity.all_documents · 
+    old_doc.doctype = doctype ∧ old_doc.name = name
+  
+  // Pre-condition: User has write permission
+  has_permission(user, doctype, "write")
+  
+  let old_doc = select_document(doctype, name) in
+  can_write_document(user, old_doc)
+  
+  success = true ⇒ (
+    // Document status allows modification
+    old_doc.docstatus ∈ {draft, submitted} ∧
+    (old_doc.docstatus = submitted ⇒ 
+      old_doc.meta.is_submittable = true) ∧
+    
+    // Updated document preserves identity
+    document.doctype = old_doc.doctype ∧
+    document.name = old_doc.name ∧
+    document.owner = old_doc.owner ∧
+    document.creation = old_doc.creation ∧
+    
+    // Update metadata
+    document.modified = now() ∧
+    document.modified_by = user ∧
+    
+    // Merge field values
+    document.field_values = old_doc.field_values ⊕ field_values ∧
+    
+    // Validate all field values
+    ∀ fname ∈ dom(document.field_values) · 
+      ∃ f ∈ document.meta.fields · 
+        f.fieldname = fname ∧ 
+        validate_field_value(f, document.field_values[fname]) ∧
+    
+    // Replace in system state
+    SystemState'.data_integrity.all_documents = 
+      (SystemState.data_integrity.all_documents \ {old_doc}) ∪ {document}
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    SystemState' = SystemState
+  )
+
+/**
+ * DeleteDocument removes a document from the system.
+ */
+schema DeleteDocument
+  ΔSystemState
+  doctype?: DocTypeName
+  name?: seq Char
+  user?: UserName
+  
+  // Output
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Document exists
+  ∃ doc ∈ SystemState.data_integrity.all_documents · 
+    doc.doctype = doctype ∧ doc.name = name
+  
+  // Pre-condition: User has delete permission
+  has_permission(user, doctype, "delete")
+  
+  let doc = select_document(doctype, name) in
+  can_delete_document(user, doc)
+  
+  success = true ⇒ (
+    // Document can be deleted (not submitted, or can be cancelled)
+    (doc.docstatus = draft ∨ 
+     (doc.docstatus = cancelled ∧ doc.meta.is_submittable = true)) ∧
+    
+    // Check for dependent documents (link fields pointing to this document)
+    ¬∃ other_doc ∈ SystemState.data_integrity.all_documents,
+        f ∈ other_doc.meta.fields · 
+      f.fieldtype = link ∧
+      f.options = Some(doctype) ∧
+      f.fieldname ∈ dom(other_doc.field_values) ∧
+      other_doc.field_values[f.fieldname] = name ∧
+    
+    // Remove from system state
+    SystemState'.data_integrity.all_documents = 
+      SystemState.data_integrity.all_documents \ {doc} ∧
+    
+    // Update document count
+    SystemState'.total_documents = SystemState.total_documents - 1
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    SystemState' = SystemState
+  )
+
+/**
+ * SubmitDocument finalizes a document (workflow action).
+ */
+schema SubmitDocument
+  ΔSystemState
+  doctype?: DocTypeName
+  name?: seq Char
+  user?: UserName
+  
+  // Output
+  document!: Document
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Document exists and is submittable
+  ∃ doc ∈ SystemState.data_integrity.all_documents · 
+    doc.doctype = doctype ∧ 
+    doc.name = name ∧
+    doc.meta.is_submittable = true
+  
+  // Pre-condition: User has submit permission
+  has_permission(user, doctype, "submit")
+  
+  let doc = select_document(doctype, name) in
+  
+  success = true ⇒ (
+    // Document must be in draft status
+    doc.docstatus = draft ∧
+    
+    // Updated document
+    document.doctype = doc.doctype ∧
+    document.name = doc.name ∧
+    document.docstatus = submitted ∧
+    document.modified = now() ∧
+    document.modified_by = user ∧
+    
+    // All validations pass
+    ∀ f ∈ document.meta.fields · 
+      f.required = true ⇒ 
+        f.fieldname ∈ dom(document.field_values) ∧
+        document.field_values[f.fieldname] ≠ null ∧
+    
+    // Replace in system state
+    SystemState'.data_integrity.all_documents = 
+      (SystemState.data_integrity.all_documents \ {doc}) ∪ {document}
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    SystemState' = SystemState
+  )
+
+/**
+ * CancelDocument reverts a submitted document.
+ */
+schema CancelDocument
+  ΔSystemState
+  doctype?: DocTypeName
+  name?: seq Char
+  user?: UserName
+  
+  // Output
+  document!: Document
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Document exists and is submittable
+  ∃ doc ∈ SystemState.data_integrity.all_documents · 
+    doc.doctype = doctype ∧ 
+    doc.name = name ∧
+    doc.meta.is_submittable = true
+  
+  // Pre-condition: User has cancel permission
+  has_permission(user, doctype, "cancel")
+  
+  let doc = select_document(doctype, name) in
+  
+  success = true ⇒ (
+    // Document must be in submitted status
+    doc.docstatus = submitted ∧
+    
+    // Updated document
+    document.doctype = doc.doctype ∧
+    document.name = doc.name ∧
+    document.docstatus = cancelled ∧
+    document.modified = now() ∧
+    document.modified_by = user ∧
+    
+    // Replace in system state
+    SystemState'.data_integrity.all_documents = 
+      (SystemState.data_integrity.all_documents \ {doc}) ∪ {document}
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    SystemState' = SystemState
+  )
+
+// ============================================================================
+// Query Operations
+// ============================================================================
+
+/**
+ * GetList retrieves a list of documents matching filters.
+ */
+schema GetList
+  ΞSystemState                       // Read-only operation
+  doctype?: DocTypeName
+  fields?: seq FieldName
+  filters?: map[FieldName, Any]
+  order_by?: Option[seq Char]
+  limit_start?: ℤ
+  limit_page_length?: ℤ
+  user?: UserName
+  
+  // Output
+  result!: QueryResult
+  error!: Option[seq Char]
+where
+  limit_start ≥ 0
+  limit_page_length > 0
+  
+  // Pre-condition: User has read permission
+  has_permission(user, doctype, "read")
+  
+  result.doctype = doctype ∧
+  result.fields = fields ∧
+  result.filters = filters ∧
+  result.offset = limit_start ∧
+  result.limit = limit_page_length ∧
+  
+  // Get all matching documents
+  let matching_docs = {
+    doc | doc ∈ SystemState.data_integrity.all_documents,
+          doc.doctype = doctype,
+          ∀ fname ∈ dom(filters) · 
+            fname ∈ dom(doc.field_values) ∧
+            doc.field_values[fname] matches filters[fname],
+          can_read_document(user, doc)
+  } in
+  
+  result.total_count = #matching_docs ∧
+  
+  // Apply pagination
+  let sorted_docs = sort(matching_docs, order_by) in
+  let paginated_docs = 
+    drop(limit_start, take(limit_start + limit_page_length, sorted_docs)) in
+  
+  result.results = [
+    {fname ↦ doc.field_values[fname] | fname ∈ fields}
+    | doc ∈ paginated_docs
+  ]
+
+/**
+ * GetValue retrieves a single field value from a document.
+ */
+schema GetValue
+  ΞSystemState                       // Read-only operation
+  doctype?: DocTypeName
+  name?: seq Char
+  fieldname?: FieldName
+  user?: UserName
+  
+  // Output
+  value!: Option[Any]
+  error!: Option[seq Char]
+where
+  // Pre-condition: User has read permission
+  has_permission(user, doctype, "read")
+  
+  value = Some(v) ⇒ (
+    ∃ doc ∈ SystemState.data_integrity.all_documents · 
+      doc.doctype = doctype ∧
+      doc.name = name ∧
+      fieldname ∈ dom(doc.field_values) ∧
+      v = doc.field_values[fieldname] ∧
+      can_read_document(user, doc)
+  )
+  
+  value = None ⇒ (
+    ¬∃ doc ∈ SystemState.data_integrity.all_documents · 
+      doc.doctype = doctype ∧ doc.name = name ∨
+    ¬can_read_document(user, select_document(doctype, name))
+  )
+
+// ============================================================================
+// Database Transaction Operations
+// ============================================================================
+
+/**
+ * BeginTransaction starts a new database transaction.
+ */
+schema BeginTransaction
+  ΔSystemState
+where
+  // Pre-condition: Not already in transaction
+  SystemState.db_connection.in_transaction = false
+  
+  // Start transaction
+  SystemState'.db_connection.in_transaction = true ∧
+  SystemState'.db_connection.autocommit = false ∧
+  SystemState'.db_connection.transaction_depth = 1 ∧
+  SystemState'.db_connection.savepoints = []
+
+/**
+ * Commit commits the current transaction.
+ */
+schema Commit
+  ΔSystemState
+where
+  // Pre-condition: In transaction
+  SystemState.db_connection.in_transaction = true
+  
+  // Commit and reset transaction state
+  SystemState'.db_connection.in_transaction = false ∧
+  SystemState'.db_connection.autocommit = true ∧
+  SystemState'.db_connection.transaction_depth = 0 ∧
+  SystemState'.db_connection.savepoints = [] ∧
+  
+  // All changes are persisted
+  // (implicitly handled by database)
+  true
+
+/**
+ * Rollback rolls back the current transaction.
+ */
+schema Rollback
+  ΔSystemState
+where
+  // Pre-condition: In transaction
+  SystemState.db_connection.in_transaction = true
+  
+  // Rollback and reset transaction state
+  SystemState'.db_connection.in_transaction = false ∧
+  SystemState'.db_connection.autocommit = true ∧
+  SystemState'.db_connection.transaction_depth = 0 ∧
+  SystemState'.db_connection.savepoints = [] ∧
+  
+  // All changes are discarded
+  SystemState'.data_integrity = SystemState.data_integrity
+
+/**
+ * CreateSavepoint creates a named savepoint within a transaction.
+ */
+schema CreateSavepoint
+  ΔSystemState
+  savepoint_name?: seq Char
+where
+  // Pre-condition: In transaction
+  SystemState.db_connection.in_transaction = true
+  
+  // Add savepoint
+  SystemState'.db_connection.savepoints = 
+    SystemState.db_connection.savepoints ++ [savepoint_name] ∧
+  SystemState'.db_connection.transaction_depth = 
+    SystemState.db_connection.transaction_depth + 1
+
+// ============================================================================
+// Background Job Operations
+// ============================================================================
+
+/**
+ * EnqueueJob adds a background job to a queue.
+ */
+schema EnqueueJob
+  ΔSystemState
+  method?: seq Char
+  args?: seq Any
+  kwargs?: map[seq Char, Any]
+  queue?: seq Char
+  timeout?: ℤ
+  
+  // Output
+  job!: BackgroundJob
+  success!: Bool
+where
+  queue ∈ {"default", "short", "long"}
+  timeout > 0
+  
+  success = true ⇒ (
+    // Create new job
+    job.job_id ∉ {j.job_id | q ∈ dom(SystemState.job_queues), 
+                             j ∈ SystemState.job_queues[q].jobs} ∧
+    job.job_name = method ∧
+    job.method = method ∧
+    job.args = args ∧
+    job.kwargs = kwargs ∧
+    job.queue_name = queue ∧
+    job.status = queued ∧
+    job.enqueued_at = now() ∧
+    job.timeout = timeout ∧
+    job.retry_count = 0 ∧
+    job.max_retries = 3 ∧
+    
+    // Add to appropriate queue
+    queue ∈ dom(SystemState'.job_queues) ∧
+    SystemState'.job_queues[queue].jobs = 
+      SystemState.job_queues[queue].jobs ++ [job]
+  )
+
+/**
+ * ExecuteJob runs a background job.
+ */
+schema ExecuteJob
+  ΔSystemState
+  job_id?: seq Char
+  
+  // Output
+  result!: Option[Any]
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Job exists and is queued
+  ∃ q ∈ dom(SystemState.job_queues), 
+    j ∈ SystemState.job_queues[q].jobs · 
+      j.job_id = job_id ∧ j.status = queued
+  
+  let queue_name = (select q | q ∈ dom(SystemState.job_queues), 
+                               ∃ j ∈ SystemState.job_queues[q].jobs · 
+                                 j.job_id = job_id) in
+  let job = (select j | j ∈ SystemState.job_queues[queue_name].jobs, 
+                        j.job_id = job_id) in
+  
+  success = true ⇒ (
+    // Update job status to started
+    let started_job = job with 
+      status = started, 
+      started_at = Some(now()) in
+    
+    // Execute method (abstract representation)
+    result = execute_method(job.method, job.args, job.kwargs) ∧
+    
+    // Update job status to finished
+    let finished_job = started_job with 
+      status = finished,
+      ended_at = Some(now()),
+      result = result in
+    
+    // Update in queue
+    SystemState'.job_queues[queue_name].jobs = 
+      replace_job(SystemState.job_queues[queue_name].jobs, job_id, finished_job)
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    
+    // Update job status to failed
+    let failed_job = job with 
+      status = failed,
+      started_at = Some(now()),
+      ended_at = Some(now()),
+      exception = error in
+    
+    // Update in queue
+    SystemState'.job_queues[queue_name].jobs = 
+      replace_job(SystemState.job_queues[queue_name].jobs, job_id, failed_job)
+  )
+
+// ============================================================================
+// API Operations
+// ============================================================================
+
+/**
+ * APICall represents a generic API method call.
+ */
+schema APICall
+  ΔSystemState
+  method_name?: seq Char
+  args?: seq Any
+  kwargs?: map[seq Char, Any]
+  user?: UserName
+  
+  // Output
+  result!: Option[Any]
+  success!: Bool
+  error!: Option[seq Char]
+where
+  // Pre-condition: Method is whitelisted
+  is_whitelisted(method_name)
+  
+  // Pre-condition: User is authenticated
+  user ≠ "Guest" ∨ allow_guest_access(method_name)
+  
+  success = true ⇒ (
+    // Execute the method
+    result = execute_method(method_name, args, kwargs) ∧
+    
+    // Update request count
+    SystemState'.total_requests = SystemState.total_requests + 1
+  )
+  
+  success = false ⇒ (
+    error ≠ None ∧
+    SystemState' = SystemState
+  )
+
+// ============================================================================
+// Helper Functions (Abstract Specifications)
+// ============================================================================
+
+function verify_password(username: UserName, password: seq Char): Bool
+function verify_otp(username: UserName, otp: seq Char): Bool
+function generate_name(doctype: DocTypeName, values: map[FieldName, Any]): seq Char
+function has_permission(user: UserName, doctype: DocTypeName, perm: seq Char): Bool
+function can_read_document(user: UserName, doc: Document): Bool
+function can_write_document(user: UserName, doc: Document): Bool
+function can_delete_document(user: UserName, doc: Document): Bool
+function is_whitelisted(method: seq Char): Bool
+function allow_guest_access(method: seq Char): Bool
+function execute_method(method: seq Char, args: seq Any, kwargs: map[seq Char, Any]): Any
+function get_meta(doctype: DocTypeName): DocType
+function select_document(doctype: DocTypeName, name: seq Char): Document
+function replace_job(jobs: seq BackgroundJob, job_id: seq Char, new_job: BackgroundJob): seq BackgroundJob
+
+// ============================================================================
+// End of Operations Specification
+// ============================================================================

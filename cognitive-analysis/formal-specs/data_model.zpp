@@ -1,0 +1,492 @@
+/**
+ * Frappe Framework - Data Model Formal Specification (Z++)
+ * 
+ * This specification formalizes the data layer of the Frappe Framework,
+ * including DocType definitions, field types, and data constraints.
+ * 
+ * Based on:
+ * - frappe/model/document.py
+ * - frappe/model/meta.py
+ * - frappe/database/database.py
+ */
+
+// ============================================================================
+// Basic Types and Constants
+// ============================================================================
+
+[DocTypeName, FieldName, UserName, RoleName]
+
+DocStatus ::= draft | submitted | cancelled
+
+FieldType ::= data | text | small_text | long_text | code | 
+              text_editor | markdown_editor | html_editor |
+              int | long_int | float | currency | percent |
+              check | select | link | dynamic_link | read_only |
+              attach | attach_image | signature | color | barcode |
+              date | datetime | time | duration | rating |
+              table | table_multiselect | password | geolocation |
+              button | column_break | section_break | tab_break | html
+
+LinkType ::= strong | weak
+
+// ============================================================================
+// Field Definition Schema
+// ============================================================================
+
+/**
+ * DocField represents a field definition in a DocType.
+ * Each field has a name, label, type, and various constraints.
+ */
+schema DocField
+  fieldname: FieldName
+  label: seq Char
+  fieldtype: FieldType
+  required: Bool
+  unique: Bool
+  readonly: Bool
+  hidden: Bool
+  default_value: Option[seq Char]
+  options: Option[seq Char]          // For select, link, etc.
+  length: Option[ℤ]                   // Maximum length for text fields
+  precision: Option[ℤ]                // Decimal precision for numeric fields
+  depends_on: Option[seq Char]        // Conditional display logic
+  mandatory_depends_on: Option[seq Char]
+  read_only_depends_on: Option[seq Char]
+  in_list_view: Bool                  // Display in list view
+  in_filter: Bool                     // Filterable
+  in_standard_filter: Bool
+  search_index: Bool                  // Create database index
+  bold: Bool
+  columns: Option[ℤ]                  // Column width
+  insert_after: Option[FieldName]     // Field ordering
+where
+  // Length constraint for text fields
+  fieldtype ∈ {data, small_text, text, long_text} ⇒ length ≠ None
+  
+  // Options required for select and link fields
+  fieldtype ∈ {select, link} ⇒ options ≠ None
+  
+  // Precision only for numeric fields
+  fieldtype ∈ {float, currency, percent} ⇒ precision ∈ {Some(n) | 0 ≤ n ≤ 9}
+  
+  // Length must be positive if specified
+  length = Some(l) ⇒ l > 0
+  
+  // Column width constraints
+  columns = Some(c) ⇒ 1 ≤ c ≤ 12
+
+// ============================================================================
+// Permission Schema
+// ============================================================================
+
+/**
+ * DocPerm represents permission rules for a DocType.
+ * Permissions are role-based and can be conditional.
+ */
+schema DocPerm
+  role: RoleName
+  permlevel: ℤ
+  read: Bool
+  write: Bool
+  create: Bool
+  delete_perm: Bool
+  submit: Bool
+  cancel: Bool
+  amend: Bool
+  report: Bool
+  export: Bool
+  import: Bool
+  share: Bool
+  print: Bool
+  email: Bool
+  set_user_permissions: Bool
+  if_owner: Bool                      // Permission only if user is owner
+  match: Option[seq Char]             // Match condition (e.g., territory)
+where
+  permlevel ≥ 0
+  
+  // Write permission requires read permission
+  write = true ⇒ read = true
+  
+  // Submit and cancel require write permission
+  (submit = true ∨ cancel = true) ⇒ write = true
+  
+  // Delete requires write permission
+  delete_perm = true ⇒ write = true
+  
+  // Create requires write permission
+  create = true ⇒ write = true
+
+// ============================================================================
+// DocType Metadata Schema
+// ============================================================================
+
+/**
+ * DocType represents the metadata definition of a document type.
+ * This is the core of Frappe's metadata-driven architecture.
+ */
+schema DocType
+  name: DocTypeName
+  module: seq Char
+  istable: Bool                       // Child table or master table
+  issingle: Bool                      // Single DocType (no multiple records)
+  editable_grid: Bool
+  track_changes: Bool
+  track_seen: Bool
+  track_views: Bool
+  custom: Bool                        // User-created custom DocType
+  beta: Bool
+  
+  // Document behavior
+  is_submittable: Bool               // Documents can be submitted
+  is_virtual: Bool                   // No database table
+  is_tree: Bool                      // Hierarchical structure
+  autoname: Option[seq Char]         // Naming rule
+  
+  // Field definitions
+  fields: seq DocField
+  
+  // Permissions
+  permissions: seq DocPerm
+  
+  // Hooks
+  has_web_view: Bool
+  allow_guest_to_view: Bool
+  allow_copy: Bool
+  allow_rename: Bool
+  allow_import: Bool
+  allow_auto_repeat: Bool
+  
+  // Email and notifications
+  email_append_to: Bool
+  allow_events_in_timeline: Bool
+  
+  // Search and sorting
+  search_fields: Option[seq FieldName]
+  title_field: Option[FieldName]
+  sort_field: Option[FieldName]
+  sort_order: Option[seq Char]       // ASC or DESC
+  
+  // Naming
+  name_case: Option[seq Char]        // Title Case, UPPER CASE, etc.
+  
+  // Lifecycle
+  is_calendar_and_gantt: Bool
+  quick_entry: Bool
+  
+  // System fields (always present)
+  standard_fields: seq DocField
+where
+  // Single DocTypes cannot be submittable
+  issingle = true ⇒ is_submittable = false
+  
+  // Virtual DocTypes have no table
+  is_virtual = true ⇒ istable = false
+  
+  // Table DocTypes have specific restrictions
+  istable = true ⇒ (is_submittable = false ∧ issingle = false)
+  
+  // Field names must be unique
+  ∀ i, j: 0 ≤ i < j < #fields ⇒ fields[i].fieldname ≠ fields[j].fieldname
+  
+  // Title field must exist in fields
+  title_field = Some(fname) ⇒ ∃ f ∈ fields · f.fieldname = fname
+  
+  // Search fields must exist in fields
+  search_fields = Some(sf) ⇒ 
+    ∀ fname ∈ sf · ∃ f ∈ fields · f.fieldname = fname
+  
+  // Standard fields are always present
+  #standard_fields = 7  // name, owner, creation, modified, modified_by, docstatus, idx
+
+// ============================================================================
+// Document Instance Schema
+// ============================================================================
+
+/**
+ * Document represents an instance of a DocType with actual data.
+ */
+schema Document
+  doctype: DocTypeName
+  name: seq Char                      // Unique identifier
+  owner: UserName
+  creation: DateTime
+  modified: DateTime
+  modified_by: UserName
+  docstatus: DocStatus
+  idx: ℤ                              // Sort index
+  
+  // Field values (dynamic based on DocType)
+  field_values: map[FieldName, Any]
+  
+  // Child table documents (for table fields)
+  child_docs: map[FieldName, seq Document]
+  
+  // Metadata
+  meta: DocType
+  
+  // Flags and state
+  flags: map[seq Char, Bool]
+  
+  // Parent information (for child documents)
+  parent: Option[seq Char]
+  parenttype: Option[DocTypeName]
+  parentfield: Option[FieldName]
+where
+  idx ≥ 0
+  
+  // Field values must correspond to defined fields
+  ∀ fname ∈ dom(field_values) · 
+    ∃ f ∈ meta.fields · f.fieldname = fname
+  
+  // Required fields must have values
+  ∀ f ∈ meta.fields · 
+    (f.required = true ∧ f.fieldtype ∉ {column_break, section_break, tab_break}) ⇒ 
+    fname ∈ dom(field_values) ∧ field_values[fname] ≠ null
+  
+  // Child table structure consistency
+  ∀ fname ∈ dom(child_docs) · 
+    ∃ f ∈ meta.fields · f.fieldname = fname ∧ f.fieldtype = table
+  
+  // Child documents must have parent information
+  ∀ fname ∈ dom(child_docs), cd ∈ child_docs[fname] · 
+    cd.parent = Some(name) ∧ 
+    cd.parenttype = Some(doctype) ∧ 
+    cd.parentfield = Some(fname)
+  
+  // Single DocTypes have fixed name
+  meta.issingle = true ⇒ name = meta.name
+  
+  // Table DocTypes must have parent
+  meta.istable = true ⇒ parent ≠ None
+  
+  // Modified timestamp must be >= creation timestamp
+  modified ≥ creation
+  
+  // Submitted documents cannot be modified (except cancellation)
+  docstatus = submitted ⇒ 
+    (modified_by = owner ∨ ∃ perm ∈ meta.permissions · perm.cancel = true)
+
+// ============================================================================
+// Field Value Validation
+// ============================================================================
+
+/**
+ * FieldValue represents a value for a specific field type with validation.
+ */
+schema FieldValue
+  field: DocField
+  value: Any
+where
+  // Type-specific validations
+  field.fieldtype = int ⇒ value ∈ ℤ
+  
+  field.fieldtype = check ⇒ value ∈ {0, 1}
+  
+  field.fieldtype ∈ {data, text, small_text} ⇒ 
+    (value ∈ seq Char ∧ 
+     field.length = Some(l) ⇒ #value ≤ l)
+  
+  field.fieldtype ∈ {float, currency, percent} ⇒ 
+    (value ∈ ℝ ∧ 
+     field.precision = Some(p) ⇒ 
+     value = round(value, p))
+  
+  field.fieldtype = date ⇒ value ∈ Date
+  
+  field.fieldtype = datetime ⇒ value ∈ DateTime
+  
+  field.fieldtype = link ⇒ 
+    (value ∈ seq Char ∧ 
+     field.options = Some(target_doctype) ⇒ 
+     ∃ doc: Document · doc.doctype = target_doctype ∧ doc.name = value)
+  
+  field.fieldtype = select ⇒ 
+    (field.options = Some(opts) ⇒ 
+     value ∈ split(opts, "\n"))
+
+// ============================================================================
+// Naming Schema
+// ============================================================================
+
+/**
+ * NamingRule defines how documents are named automatically.
+ */
+NamingPattern ::= field | prompt | format | autoincrement | hash | random
+
+schema NamingRule
+  doctype: DocTypeName
+  pattern: NamingPattern
+  rule: seq Char
+where
+  // Field-based naming: "field:fieldname"
+  pattern = field ⇒ 
+    ∃ fname: FieldName · rule = "field:" + fname
+  
+  // Format-based naming: ".YYYY.-.MM.-" etc.
+  pattern = format ⇒ 
+    rule[0] = '.' ∨ '#' ∈ rule
+  
+  // Hash: uses hash of some fields
+  pattern = hash ⇒ rule = "hash"
+  
+  // Autoincrement: needs prefix
+  pattern = autoincrement ⇒ #rule > 0
+
+// ============================================================================
+// Link Validation Schema
+// ============================================================================
+
+/**
+ * LinkValidation ensures referential integrity between documents.
+ */
+schema LinkValidation
+  source_doctype: DocTypeName
+  source_field: FieldName
+  target_doctype: DocTypeName
+  link_type: LinkType
+where
+  // Strong links require target to exist
+  link_type = strong ⇒ 
+    ∀ doc: Document · 
+      (doc.doctype = source_doctype ∧ 
+       source_field ∈ dom(doc.field_values)) ⇒ 
+      ∃ target: Document · 
+        target.doctype = target_doctype ∧ 
+        target.name = doc.field_values[source_field]
+
+// ============================================================================
+// Data Constraints Schema
+// ============================================================================
+
+/**
+ * DataConstraint represents database-level constraints.
+ */
+schema DataConstraint
+  doctype: DocTypeName
+  constraint_type: seq Char          // UNIQUE, INDEX, CHECK
+  fields: seq FieldName
+  condition: Option[seq Char]
+where
+  // All fields must exist in DocType
+  ∀ fname ∈ fields · 
+    ∃ dt: DocType, f ∈ dt.fields · 
+      dt.name = doctype ∧ f.fieldname = fname
+  
+  // Unique constraints cannot be empty
+  constraint_type = "UNIQUE" ⇒ #fields > 0
+
+// ============================================================================
+// Document Collections
+// ============================================================================
+
+/**
+ * DocumentCollection represents all documents of a given DocType.
+ */
+schema DocumentCollection
+  doctype: DocTypeName
+  meta: DocType
+  documents: set Document
+where
+  // All documents belong to this DocType
+  ∀ doc ∈ documents · doc.doctype = doctype
+  
+  // Document names are unique
+  ∀ d1, d2 ∈ documents · d1 ≠ d2 ⇒ d1.name ≠ d2.name
+  
+  // Single DocTypes have at most one document
+  meta.issingle = true ⇒ #documents ≤ 1
+
+// ============================================================================
+// Query Result Schema
+// ============================================================================
+
+/**
+ * QueryResult represents the result of a database query.
+ */
+schema QueryResult
+  doctype: DocTypeName
+  fields: seq FieldName
+  filters: map[FieldName, Any]
+  results: seq map[FieldName, Any]
+  total_count: ℤ
+  offset: ℤ
+  limit: ℤ
+where
+  offset ≥ 0
+  limit > 0
+  total_count ≥ 0
+  #results ≤ limit
+  
+  // All result rows have the specified fields
+  ∀ row ∈ results · 
+    dom(row) = set(fields)
+
+// ============================================================================
+// Data Invariants
+// ============================================================================
+
+/**
+ * DataIntegrity defines global data integrity constraints.
+ */
+schema DataIntegrity
+  all_doctypes: set DocType
+  all_documents: set Document
+where
+  // DocType names are unique
+  ∀ dt1, dt2 ∈ all_doctypes · 
+    dt1 ≠ dt2 ⇒ dt1.name ≠ dt2.name
+  
+  // Every document references a valid DocType
+  ∀ doc ∈ all_documents · 
+    ∃ dt ∈ all_doctypes · dt.name = doc.doctype
+  
+  // Link fields reference existing documents
+  ∀ doc ∈ all_documents, f ∈ doc.meta.fields · 
+    (f.fieldtype = link ∧ 
+     f.fieldname ∈ dom(doc.field_values) ∧ 
+     f.options = Some(target_dt)) ⇒ 
+    ∃ target ∈ all_documents · 
+      target.doctype = target_dt ∧ 
+      target.name = doc.field_values[f.fieldname]
+  
+  // No circular parent-child relationships
+  ∀ doc ∈ all_documents · 
+    doc.parent = Some(pname) ⇒ 
+    ¬∃ ancestor: Document · 
+      ancestor.name = pname ∧ 
+      ancestor.parent = Some(doc.name)
+
+// ============================================================================
+// Value Types and Operations
+// ============================================================================
+
+/**
+ * Helper function to check if a value matches a field type.
+ */
+function value_matches_type(value: Any, ftype: FieldType): Bool =
+  case ftype of
+    int → value ∈ ℤ
+  | float → value ∈ ℝ
+  | check → value ∈ {0, 1}
+  | date → value ∈ Date
+  | datetime → value ∈ DateTime
+  | data → value ∈ seq Char
+  | text → value ∈ seq Char
+  | link → value ∈ seq Char
+  | select → value ∈ seq Char
+  | _ → true
+  end
+
+/**
+ * Helper function to validate field value against field definition.
+ */
+function validate_field_value(field: DocField, value: Any): Bool =
+  value_matches_type(value, field.fieldtype) ∧
+  (field.required = true ⇒ value ≠ null) ∧
+  (field.fieldtype = link ∧ field.options = Some(dt) ⇒ 
+    ∃ doc: Document · doc.doctype = dt ∧ doc.name = value)
+
+// ============================================================================
+// End of Data Model Specification
+// ============================================================================
