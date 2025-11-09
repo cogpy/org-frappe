@@ -1,0 +1,477 @@
+---
+base_template: 'templates/web.html'
+no_cache: 1
+skip_frappe_bundle: 1
+---
+
+{% import "templates/macros.html" as m %}
+
+{% include "templates/secondary-nav.html" %}
+
+<div class="row">
+    <div class="col-sm-2 d-none d-sm-block">
+        <div class="vertical-nav">
+            {% macro sidebar_item(label, value) %}
+            <a
+                class="sidebar-nav-item {{ 'active' if active_tab == label else '' }}"
+                href="{{ state_url(pillar_or_theme=value) }}"
+            >
+                {{ label }}
+            </a>
+            {% endmacro %}
+
+            {{ sidebar_item('Overall', 'overall') }}
+            <label class="sidebar-nav-label">Pillars</label>
+            {{ sidebar_item('Police', 'police') }}
+            {{ sidebar_item('Prisons', 'prisons') }}
+            {{ sidebar_item('Judiciary', 'judiciary') }}
+            {{ sidebar_item('Legal Aid', 'legal_aid') }}
+            <label class="sidebar-nav-label">Ranked Themes</label>
+            {{ sidebar_item('Human Resources', 'hr') }}
+            {{ sidebar_item('Diversity', 'diversity') }}
+            {{ sidebar_item('Trends', 'trends') }}
+        </div>
+    </div>
+    <div class="col-12 d-sm-none mb-6 mt-4">
+        <select class="cluster-select w-100" onchange="window.location.href = this.value">
+            {% macro option(label, value) %}
+            <option value="{{ state_url(pillar_or_theme=value) }}" {{ 'selected' if active_tab == label else '' }}>{{ label }}</option>
+            {% endmacro %}
+            {{ option('Overall', 'overall') }}
+            <optgroup label="Rank by Pillars">
+            {{ option('Police', 'police') }}
+            {{ option('Prisons', 'prisons') }}
+            {{ option('Judiciary', 'judiciary') }}
+            {{ option('Legal Aid', 'legal_aid') }}
+            </optgroup>
+            <optgroup label="Rank by Themees">
+                {{ option('Human Resources', 'hr') }}
+                {{ option('Diversity', 'diversity') }}
+                {{ option('Trends', 'trends') }}
+            </optgroup>
+        </select>
+    </div>
+    <div class="col">
+<!-- main content -->
+
+<div class="title-toolbar">
+    <div>
+        <div class="d-flex align-items-center">
+            <h1 class="indicator-heading">
+                <button onclick="changeStateDialog.show()">
+                    {{ state.name }}
+                    <svg xmlns="http://www.w3.org/2000/svg" style="width: 1.5rem; color: var(--accent-color)" aria-hidden="true" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4"/></svg>
+                </button>
+            </h1>
+        </div>
+        <div class="mt-1">
+            Cluster: {{ state.cluster }}
+        </div>
+    </div>
+    <div class="text-right">
+        {% if active_tab == 'Overall' and current_ranking and ijr_number == 0 %}
+        <div class="view-switcher mb-2" x-data="toggleScoreData">
+            <button @click="toggleScore('Rank')" :class="currentValue == 'Rank' && 'active'">
+                Rank
+            </button>
+            <button @click="toggleScore('Score')" :class="currentValue == 'Score' && 'active'">
+                Score
+            </button>
+        </div>
+        {% endif %}
+        {{ m.color_legend(class='d-none d-md-flex') }}
+    </div>
+</div>
+
+{% macro state_overview(dimension, label) %}
+<div class="state-overview mb-6" style="--color: {{ get_color(current_ranking.get(dimension + '_color')) or 'var(--sl-color-gray-100)' }};">
+    <div class="state-overview-stat">
+        <span class="label">{{ label }} Rank</span>
+        <div class="stat" style="background-color: var(--color)">{{ current_ranking.get(dimension + '_rank') }}</div>
+    </div>
+    {%- if current_ranking and previous_ranking -%}
+    {%- set current_rank = current_ranking.get(dimension + '_rank') -%}
+    {%- set previous_rank = previous_ranking.get(dimension + '_rank') -%}
+    {%- if current_rank and previous_rank -%}
+    {%- set delta = current_rank - previous_rank -%}
+    <div class="state-overview-stat">
+        <span class="label">{{ label }} Rank Change</span>
+        <div class="stat">{{ '+' if delta > 0 else ''}}{{ delta }}</div>
+    </div>
+    {%- endif -%}
+    {%- endif -%}
+    <div class="state-overview-stat">
+        <span class="label">{{ label }} Score</span>
+        <div class="stat" style="background-color: var(--color)">
+            {{ current_ranking.get(dimension + '_score') }}
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+<div class="flex mt-6">
+
+<div class="w-100">
+<!-- Main Content -->
+{% macro render_tab(tab) %}
+<sl-tab onclick="{{ tab.onclick }}" {{ 'active' if active_tab==tab.label else '' }}>
+    {{ tab.label }}
+</sl-tab>
+{% endmacro %}
+
+{% if active_tab == 'Overall' %}
+    {% if current_ranking %}
+    <div class="featured-table-container">
+    <!-- #region Overall -->
+    <div class="flex items-start justify-between">
+        <div class="flex-1 w-100 mr-4">
+            {%- if ijr_number > 0 -%}
+            {%- set rank_out_of = 18 if 'Large' in state.cluster else 7 -%}
+            <table class="featured-table featured-table-lg">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th align="center">Rank (out of {{ rank_out_of }})</th>
+                        <th align="center">Rank Change</th>
+                        <th align="center">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-weight-bold">Overall</td>
+                        <td align="center" style="background-color: {{ get_key_color(current_ranking, 'overall') }}">
+                            {{ current_ranking.get('overall_rank') }}</td>
+                        <td align="center">{{ current_ranking.get('overall_rank_delta') }}</td>
+                        <td align="center">{{ current_ranking.get('overall_score') }}</td>
+                    </tr>
+                    <tr><td colspan="4" class="font-weight-bold">Pillars</td></tr>
+                    {%- for title, key in [['Police', 'police'], ['Prison', 'prisons'], ['Judiciary', 'judiciary'], ['Legal Aid', 'legal_aid']] -%}
+                    <tr>
+                        <td>{{ title }}</td>
+                        <td align="center" style="background-color: {{ get_key_color(current_ranking, key) }}">
+                            {{ current_ranking.get(key + '_rank') }}</td>
+                        <td align="center">{{ current_ranking.get(key + '_rank_delta') }}</td>
+                        <td align="center">{{ current_ranking.get(key + '_score') }}</td>
+                    </tr>
+                    {%- endfor -%}
+                    <tr><td colspan="4" class="font-weight-bold">Ranked Themes</td></tr>
+                    {%- for title, key in [['Human Resources', 'hr'], ['Diversity', 'diversity'], ['Trends', 'trends']] -%}
+                    <tr>
+                        <td>{{ title }}</td>
+                        <td align="center" style="background-color: {{ get_key_color(current_ranking, key) }}">{{ current_ranking.get(key + '_rank') }}</td>
+                        <td align="center">{{ current_ranking.get(key + '_rank_delta') }}</td>
+                        <td align="center">{{ current_ranking.get(key + '_score') }}</td>
+                    </tr>
+                    {%- endfor -%}
+                </tbody>
+            </table>
+            {%- else -%}
+            <!-- show comparison tables across ijrs -->
+            {%- set columns = [
+                {
+                    'label': 'IJR #',
+                    'id': 'ijr_number',
+                    'width': 100,
+                    'format': '''IJR ${d.ijr_number}'''
+                },
+                {
+                    'label': 'Overall',
+                    'id': 'overall_rank',
+                    'align': 'center',
+                    'width': 120
+                },
+                {
+                    'label': 'Overall',
+                    'id': 'overall_score',
+                    'align': 'center',
+                    'width': 120
+                },
+            ] -%}
+            {%- with data=all_rankings, columns=columns, class="overall-tab-table" -%}
+            <div class="mb-2 d-flex align-items-center justify-between">
+                <h2 class="pl-6 pl-md-0">Overall Ranks</h2>
+            </div>
+            {% include "templates/includes/featured-table.html" %}
+            {%- endwith -%}
+
+            {%- set columns = [
+            {
+                'label': 'IJR #',
+                'id': 'ijr_number',
+                'width': 100,
+                'format': '''IJR ${d.ijr_number}'''
+            },
+            {
+                'label': 'Police',
+                'id': 'police_rank',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Police',
+                'id': 'police_score',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Prisons',
+                'id': 'prisons_rank',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Prisons',
+                'id': 'prisons_score',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Judiciary',
+                'id': 'judiciary_rank',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Judiciary',
+                'id': 'judiciary_score',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Legal Aid',
+                'id': 'legal_aid_rank',
+                'align': 'center',
+                'width': 120
+            },
+            {
+                'label': 'Legal Aid',
+                'id': 'legal_aid_score',
+                'align': 'center',
+                'width': 120
+            },
+            ] -%}
+            {%- with data=all_rankings, columns=columns, class="overall-tab-table" -%}
+            <div class="mt-8 mb-2 d-flex align-items-center justify-between">
+                <h2 class="pl-6 pl-md-0">Pillar Ranks</h2>
+            </div>
+            {% include "templates/includes/featured-table.html" %}
+            {%- endwith -%}
+
+            {%- set columns = [
+                {
+                    'label': 'IJR #',
+                    'id': 'ijr_number',
+                    'width': 100,
+                    'format': '''IJR ${d.ijr_number}'''
+                },
+                {
+                    'label': 'HR',
+                    'id': 'hr_rank',
+                    'align': 'center',
+                    'width': 120
+                },
+                {
+                    'label': 'HR',
+                    'id': 'hr_score',
+                    'align': 'center',
+                    'width': 120
+                },
+                {
+                    'label': 'Diversity',
+                    'id': 'diversity_rank',
+                    'align': 'center',
+                    'width': 120
+                },
+                {
+                    'label': 'Diversity',
+                    'id': 'diversity_score',
+                    'align': 'center',
+                    'width': 120
+                },
+                {
+                    'label': 'Trends',
+                    'id': 'trends_rank',
+                    'align': 'center',
+                    'width': 120
+                },
+                {
+                    'label': 'Trends',
+                    'id': 'trends_score',
+                    'align': 'center',
+                    'width': 120
+                }
+            ] -%}
+            {%- with data=all_rankings, columns=columns, class="overall-tab-table" -%}
+            <h2 class="mt-8 mb-2 pl-6 pl-md-0">Theme Ranks</h2>
+            {% include "templates/includes/featured-table.html" %}
+            {%- endwith -%}
+
+            <script>
+                document.addEventListener('alpine:init', () => {
+                    Alpine.data('toggleScoreData', () => ({
+                        currentValue: 'Rank',
+                        toggleScore(value) {
+                            this.currentValue = value;
+                            let showScore = this.currentValue == 'Score';
+                            document.querySelectorAll('.overall-tab-table').forEach(function(table) {
+                                if (showScore) {
+                                    table.classList.add('show-scores');
+                                } else {
+                                    table.classList.remove('show-scores');
+                                }
+                            });
+                        }
+                    }))
+                })
+            </script>
+            {%- endif -%}
+        </div>
+
+        <div class="flex-shrink-0 d-none d-md-block">
+            {%- with state=state.code, color_code=current_ranking.overall_color -%}
+            {% include "templates/includes/india_map.html" %}
+            {%- endwith -%}
+        </div>
+    </div>
+    <!-- endregion -->
+    </div>
+    {% else %}
+    <h2>Not ranked in IJR</h2>
+    <p style="max-width: 65ch; margin-top: 1rem;">
+        {{ help_text }}
+    </p>
+    {% endif %}
+
+{% else %}
+    <!-- Pillar/Theme view -->
+    {{ m.featured_table_help_text() }}
+    <div class="featured-table-container fill-height-scroll horizontal-breakout">
+    {%- set indicator_url_template = indicator_url(indicator_id='101', ijr_number=ijr_number, cluster=cluster, view=view).replace('101', '${d.indicator_id}') -%}
+    {%- set columns = [
+    {
+        'label': 'Indicator',
+        'id': 'indicator_name',
+        'format': '<a href="' + indicator_url_template + '">${d.indicator_name}</a>',
+        'width': 310,
+        'filter': true
+    },
+    { 'label': 'Theme', 'id': 'theme', 'width': 150, 'filter': true, 'hide_condition': ijr_theme },
+    { 'label': 'Pillar', 'id': 'pillar', 'width': 150, 'filter': true, 'hide_condition': ijr_pillar },
+    { 'label': 'IJR', 'id': 'ijr_number', 'width': 100, 'align': 'center', 'filter': true },
+    { 'label': 'Score', 'id': 'ijr_score', 'width': 100, 'format': '''return Number(d.ijr_score).toFixed(2)''', 'align': 'right' },
+    { 'label': 'Value', 'id': 'indicator_value', 'width': 100, 'align': 'right' },
+    { 'label': 'Unit', 'id': 'indicator_unit', 'width': 100 },
+    { 'label': 'Period', 'id': 'year', 'width': 150, },
+    {
+        'label': 'Calculation',
+        'id': 'calculation',
+        'width': 100,
+        'sort': false,
+        'format': '''
+            if (d.indicator_id && get_raw_data(d)) {
+                return `<a onclick="event.preventDefault(); show_calculations(${d.indicator_id}, ${d.ijr_number});" class="" href="#">
+                    Calculation
+                </a>`
+            }
+            return ""
+        '''
+    },
+    ] -%}
+    <div>
+        {%- with data=indicators_data, columns=columns, class="w-full-desktop" -%}
+        {% include "templates/includes/featured-table.html" %}
+        {%- endwith -%}
+    </div>
+
+    <sl-dialog label="Calculations" id="calculationsDialog" style="--width: max-content">
+        <sl-button slot="footer" variant="primary">Close</sl-button>
+    </sl-dialog>
+    </div>
+
+{% endif %}
+<!-- Main Content -->
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script>
+    let raw_data = {{ as_json(raw_data, indent = None) }};
+    window.raw_data = raw_data
+
+    function get_raw_data({ indicator_id, ijr_number }) {
+        return raw_data[indicator_id] || raw_data[`${indicator_id}-${ijr_number}`];
+    }
+
+    function show_calculations(indicator_id, ijr_number) {
+        let data = get_raw_data({ indicator_id, ijr_number });
+        let title = data[0].state
+        let description = `${data[0].pillar}: ${data[0].indicator_name}`
+
+        let dialog = window.calculationsDialog;
+        dialog.label = description || 'Calculations';
+        let header = ''
+        let rows = ''
+        let table_class = ''
+        if (data[0].theme == 'Trends') {
+            let trends_years = [];
+            let trends_data = {};
+            for (let row of data) {
+                if (!trends_years.includes(row.year)) {
+                    trends_years.push(row.year);
+                }
+                trends_data[row.year] = trends_data[row.year] || {};
+                trends_data[row.year][row.raw_data_name] = row.raw_data_value;
+            }
+
+            let sequences = [...new Set(data.map(d => d.raw_data_sequence))];
+            let raw_data_headers = sequences.map(seq => {
+                let d = data.find(d => d.raw_data_sequence == seq)
+                return `<th>${d.raw_data_name} (${d.raw_data_unit})</th>`
+            }).join('');
+            header = `
+                <th>Year</th>
+                ${raw_data_headers}
+            `;
+            rows = trends_years.map(year => {
+                return `<tr>
+                    <td>${year}</td>
+                    ${sequences.map(seq => {
+                        let d = data.find(d => d.raw_data_sequence == seq)
+                        return `<td>${trends_data[year][d.raw_data_name]}</td>`
+                    }).join('')}
+                </tr>`
+            }).join('');
+            table_class = 'table-calculations-trends'
+        } else {
+            header = `
+                <th>Metric Name</th>
+                <th>Unit</th>
+                {% for ijr_number in ijr_numbers %}
+                <th class="text-right">{{ ijr_number.title }}</th>
+                {% endfor %}
+            `;
+            rows = data.map(row => {
+                return `<tr>
+                    <td>${row.raw_data_name}</td>
+                    <td>${row.raw_data_unit}</td>
+                    {% for ijr_number in ijr_numbers %}
+                    <td class="text-right">${row['ijr_{{ ijr_number.name }}_value']}</td>
+                    {% endfor %}
+                </tr>`
+            }).join('');
+        }
+
+        dialog.innerHTML = `
+            <table class="table table-bordered table-calculations mb-0 ${table_class}">
+                <thead>
+                    ${header}
+                </thead>
+                <tbody>${rows}</tbody>
+            </table>
+        `;
+        dialog.show();
+    }
+</script>

@@ -1,0 +1,14 @@
+{
+  "name": "ff_assignment_portal",
+  "version": "1.0.0",
+  "description": "Assignment Checker Portal",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cd assignments-portal && yarn dev",
+    "build": "cd assignments-portal && yarn build",
+    "postinstall": "cd assignments-portal && yarn install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

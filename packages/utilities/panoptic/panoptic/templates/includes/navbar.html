@@ -1,0 +1,211 @@
+<nav class="container flex-wrap items-center border bg-teal-blue-500">
+	<div class="flex justify-between">
+		<a href="/" class="flex items-center flex-shrink-0 w-full px-5 py-5 border-r md:w-1/5 md:px-8">
+			<img class="h-8 mr-3 md:mr-8 md:h-12" src="/assets/panoptic/images/panoptic.svg">
+			<div class="lg:hidden">Panoptic Tracker</div>
+			<div class="hidden lg:block">Panoptic<br>Tracker</div>
+		</a>
+		<div class="flex justify-end px-5 font-medium text-orange-500 top-navbar md:w-4/5" id="navigation">
+			<div class="flex-row items-start self-center hidden lg:flex">
+				<a href="/sign-the-petition" class="nav-link {{ 'active' if pathname=='sign-the-petition' else '' }}">
+					<span>Petition</span>
+				</a>
+				{% if settings.enable_cities %}
+				<a href="/cities" class="nav-link {{ 'active' if pathname=='sign-the-petition' else '' }}">
+					<span>Cities</span>
+				</a>
+				{% endif %}
+				<a href="/column" class="nav-link {{ 'active' if pathname=='column' else '' }}">
+					<span>Column</span>
+				</a>
+				<a href="/right-to-information" class="nav-link {{ 'active' if pathname=='right-to-information' else '' }}">
+					<span>RTIs</span>
+				</a>
+				<a href="/research" class="nav-link {{ 'active' if pathname=='research' else '' }}">
+					<span>Research</span>
+				</a>
+				<a href="/donate" class="nav-link mr-5 {{ 'active' if pathname=='donate' else '' }}">
+					<span>Donate</span>
+				</a>
+				<div class="w-full search-wrapper">
+					<input name="search" id="panoptic-search-input"
+						class="block w-full mt-1 border-none form-input bg-teal-blue-700 text-teal-blue-200"
+						placeholder="Search for articles and reports">
+					<div class="hidden rounded search-list bg-teal-blue-700" id="panoptic-search-list">
+					</div>
+				</div>
+			</div>
+			<div class="flex items-center p-2 lg:hidden" onclick="toggleMenu()">
+				<svg id="menu-open" xmlns="http://www.w3.org/2000/svg" fill="none" class="w-8 h-8" viewBox="0 0 24 24"
+					stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+				</svg>
+				<svg id="menu-close" xmlns="http://www.w3.org/2000/svg" fill="none" class="hidden w-8 h-8" viewBox="0 0 24 24"
+					stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+				</svg>
+			</div>
+		</div>
+	</div>
+	<div class="flex flex-col hidden p-5 border-t lg:hidden" id="mobile-menu">
+		<a href="/" class="nav-link px-0 {{ 'active' if pathname=='index' else '' }}">
+			<span>Tracker</span>
+		</a>
+		<a href="/report-frt" class="nav-link px-0 {{ 'active' if pathname=='report-frt' else '' }}">
+			<span>Report an FRT System</span>
+		</a>
+		<a href="/sign-the-petition" class="nav-link px-0 {{ 'active' if pathname=='sign-the-petition' else '' }}">
+			<span>Sign the Petition</span>
+		</a>
+		<a href="/column" class="nav-link px-0 {{ 'active' if pathname=='column' else '' }}">
+			<span>Panoptic Column</span>
+		</a>
+		<a href="/right-to-information" class="nav-link px-0 {{ 'active' if pathname=='right-to-information' else '' }}">
+			<span>RTIs</span>
+		</a>
+		<a href="/research" class="nav-link px-0 {{ 'active' if pathname=='research' else '' }}">
+			<span>Research</span>
+		</a>
+		<a href="/donate" class="nav-link px-0 {{ 'active' if pathname=='donate' else '' }}">
+			<span>Donate</span>
+		</a>
+	</div>
+</nav>
+<script>
+	let closed = true;
+	const open = document.getElementById('menu-open');
+	const close = document.getElementById('menu-close');
+	const menu = document.getElementById('mobile-menu');
+
+	function toggleMenu() {
+		if (closed) {
+			open.classList.add('hidden');
+			menu.classList.remove('hidden');
+			close.classList.remove('hidden');
+			closed = false;
+		} else {
+			open.classList.remove('hidden');
+			menu.classList.add('hidden');
+			close.classList.add('hidden');
+			closed = true;
+		}
+	}
+
+	async function searchRequest(query = "") {
+		const headers = { "Content-Type": "application/json", "X-Frappe-CSRF-Token": frappe.csrf_token };
+
+		const config = {
+			method: "POST",
+			headers,
+			body: JSON.stringify({
+
+				query
+			})
+		};
+
+
+		return window
+			.fetch(`/api/method/panoptic.panoptic.search.search`, config)
+			.then(async (response) => {
+				if (response.ok) {
+					const data = await response.json();
+					return data.message;
+				} else {
+					console.log(response.status, response.statusText)
+					return Promise.reject();
+				}
+			});
+
+	}
+
+	function getSearchItemHTML(item) {
+		return `
+			<a href="/${item.path}">
+				<div class="p-2 search-item hover:bg-teal-blue-600">
+				<h4 class="text-white">${item.title_highlights || item.title}</h4>
+				<p class="text-teal-blue-300">${item.content_highlights || item.keyword_highlights}</p>
+				</div>
+			</a>
+		`
+
+	}
+
+	function getSearchHTML(category, results) {
+		resultListHTML = results.map(getSearchItemHTML)
+
+		return `
+			<div>
+				<div class="px-2 py-1 text-sm font-semibold tracking-wider uppercase">${category}</div>
+				${resultListHTML.join(" ")}
+			</div>
+		`
+
+	}
+
+	async function search(term) {
+		list = document.getElementById('panoptic-search-list')
+		if (term === '') {
+			list.classList.add("hidden")
+			return
+		}
+
+
+		const result = await searchRequest(term)
+		resultHTML = ''
+
+		list.classList.remove("hidden")
+		if (Object.keys(result).length) {
+			["FRT", "Right to Information", "City", "Case Study", "Update"].forEach(category => {
+				if (result[category]) {
+					resultHTML = resultHTML + getSearchHTML(category, result[category])
+				}
+			})
+
+			list.innerHTML = resultHTML
+		} else {
+			list.innerHTML = `
+				<div class="w-full text-center no-result-found text-teal-blue-300">No results found</div>
+			`
+		}
+
+	}
+	let searchTimeout;
+
+	window.addEventListener('DOMContentLoaded', (event) => {
+		searchInput = document.getElementById('panoptic-search-input')
+		searchInput.addEventListener('input', () => {
+			clearTimeout(searchTimeout)
+			searchTimeout = setTimeout(() => {
+				search(searchInput.value)
+			}, (300));
+		})
+	});
+</script>
+<style>
+	.search-wrapper {
+		width: 400px;
+		position: realtive;
+	}
+
+	.match {
+		color: #C5CFD5;
+	}
+
+	.search-item {
+		border-bottom: 1px solid #153A4E;
+	}
+
+	.no-result-found {
+		padding: 4rem;
+	}
+
+	.search-list {
+		width: 400px;
+		margin-top: 0.4rem;
+		position: absolute;
+		max-height: 500px;
+		overflow: scroll;
+		box-shadow: var(--shadow-elevation-low);
+	}
+
+</style>

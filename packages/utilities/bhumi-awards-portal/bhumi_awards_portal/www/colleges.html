@@ -1,0 +1,99 @@
+---
+full_width: 1
+title: College Listings
+---
+
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<section class="section bg-light" data-section-idx="1" data-section-template="Hero with Right Image">
+	<div class="container">
+		<div class="hero-with-right-image">
+			<div class="hero-content">
+				<div>
+					<h1 class="hero-title">College Listing</h1>
+					<p class="hero-subtitle">
+						Cast your vote for the most deserving college out of over 35,000 colleges!
+					</p>
+					<div>
+						<a class="btn btn-lg btn-secondary" href="#college-listing">Explore</a>
+					</div>
+				</div>
+			</div>
+			<img alt="" class="image-with-blur hero-image image-loaded" data-src="/assets/bhumi_awards_portal/images/college-voting.png" src="/assets/bhumi_awards_portal/images/college-voting.png" height="2000" width="2000">
+		</div>
+	</div>
+</section>
+
+<section id="college-listing" class="section section-padding-top section-padding-bottom">
+	<div class="container" id="filters-area">
+		<div class="col">
+			<div class="form-row align-items-center">
+				<div class="col-md-4">
+					<div class="form-group">
+						<input type="text" class="form-control" id="input-name-search" placeholder="Search College">
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<select name="input-sort" id="input-sort" class="form-control">
+							<option value="total_votes" selected># of votes</option>
+							<option value="name">College Name</option>
+							<option value="location">College Location</option>
+						</select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<select class="form-control" id="input-location-search" name="input-location-search">
+							<option value=''>Select Location</option>
+							{% for location in frappe.get_all('Location', fields=['name'], order_by="name") %}
+									<option>{{ location['name'] }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="col-md-1">
+					<button id="apply-button" class="btn btn-secondary mb-4">Apply</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container colleges">
+		<div class="row">
+			<main class="col">
+				<div class="container-fluid pt-5">
+					<div id="college-listings" class="row align-items-stretch">
+					</div>
+				</div>
+
+				<nav class="d-flex justify-content-center w-100 mt-5" aria-label="Page navigation">
+					<button id="load-more-button" class="btn btn-secondary">Load More</button>
+				</nav>
+			</main>
+		</div>
+	</div>
+</section>
+
+<section class="section section-padding-top section-padding-bottom" data-section-template="Section with CTA">
+	<div class="container">
+		<div class="section-cta-container">
+			<div class="vote-cta section-cta">
+				<h2 class="title">College Registration</h2>
+				<p class="subtitle">Can't find the college you are looking for?</p>
+				<div class="mt-6">
+					<a class="btn btn-lg btn-secondary" href="/login?redirect-to=college-registration?new=1">Register Now!</a>
+				</div>
+			</div>
+			<div class="confetti confetti-1"></div>
+			<div class="confetti confetti-2"></div>
+			<div class="confetti confetti-3"></div>
+		</div>
+	</div>
+</section>
+{% endblock %}
+
+{% block script %}
+	{{ include_script('colleges.bundle.js') }}
+{% endblock %}

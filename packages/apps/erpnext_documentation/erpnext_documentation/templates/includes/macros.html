@@ -1,0 +1,60 @@
+{% macro doc_page(title,  subtitle, doc, toc_url) %}
+	<!-- title: {{ title }} -->
+
+	{{ web_blocks([
+		{
+			'template': 'Hero',
+			'values': {
+				'title': title,
+				'subtitle': subtitle
+			},
+			'add_bottom_padding': 0,
+			'add_container': 0
+		}
+	]) }}
+
+	{% for section in doc %}
+		<section class="section section-padding-top">
+			<h2 class="section-title">{{ section.title }}</h2>
+			<p class="section-description">
+				{{ section.description or '' }}
+			</p>
+			{{ cards(section.links) }}
+			<p class="mt-4 mb-0">
+				<a href="{{ toc_url or 'contents' }}" class="text-muted">View Full Contents →</a>
+			</p>
+		</section>
+	{% endfor %}
+{% endmacro %}
+
+{% macro cards(card_list) %}
+
+{{
+	web_blocks([
+		{
+			'template': "Section with Cards",
+			'values': {
+				'card_size': 'Medium',
+				'card_1_title': card_list[0].title if card_list[0] else '',
+				'card_1_content': card_list[0].content if card_list[0] else '',
+				'card_1_url': card_list[0].link if card_list[0] else '',
+				'card_2_title': card_list[1].title if card_list[1] else '',
+				'card_2_content': card_list[1].content if card_list[1] else '',
+				'card_2_url': card_list[1].link if card_list[1] else '',
+				'card_3_title': card_list[2].title if card_list[2] else '',
+				'card_3_content': card_list[2].content if card_list[2] else '',
+				'card_3_url': card_list[2].link if card_list[2] else '',
+			},
+			'add_container': 0,
+			'add_top_padding': 0,
+			'add_bottom_padding': 0,
+			'css_class': 'mt-4'
+		}
+	])
+}}
+
+{% if card_list | len > 3 %}
+{{ cards(card_list[3:]) }}
+{% endif %}
+
+{% endmacro %}

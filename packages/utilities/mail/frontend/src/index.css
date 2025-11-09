@@ -1,0 +1,13 @@
+@import 'frappe-ui/src/style.css';
+
+html {
+	@apply text-ink-gray-8 bg-surface-white text-xl sm:text-lg;
+}
+
+h1 {
+	@apply font-semibold;
+}
+
+h2 {
+	@apply text-xl font-medium sm:text-lg;
+}

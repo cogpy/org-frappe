@@ -1,0 +1,7 @@
+.page-content {
+	padding: 0px;
+}
+
+.web-list-item:last-child {
+	border-bottom: 1px solid #d1d8dd;
+}

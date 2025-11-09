@@ -1,0 +1,309 @@
+{% extends "templates/base.html" %}
+{% block title %}Frappe Charts: Simple and Modern SVG Charts{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="charts/assets/css/index.css" media="screen">
+
+{{ web_blocks([
+		{
+			'template': "Hero",
+			'values': {
+				'title': "Modern, Open Source SVG Charts",
+				'subtitle': "GitHub-inspired simple and modern SVG charts for the web with zero dependencies.",
+				'primary_action_label': "Documentation",
+				'primary_action': "/charts/docs",
+				'secondary_action_label': 'GitHub',
+				'secondary_action': "https://github.com/frappe/charts"
+			}
+		}
+	])
+}}
+
+
+<section class="section section-padding-top section-padding-bottom bg-light">
+	<div class='container'>
+		<figure id="line-composite-1"></figure>
+		<p class="text-center">Click or use arrow keys to navigate data points</p>
+		<figure id="bar-composite-1"></figure>
+	</div>
+</section>
+
+<section class="section section-padding-top section-padding-bottom">
+	<div class='container'>
+		<!-- Installation -->
+		<div class='mb-5'>
+			<h3>Installation</h3>
+			<pre><code class="hljs">yarn add frappe-gantt</code></pre>
+			<p>or include it directly in your HTML </p>
+			<pre><code class="hljs html xml">  &lt;script src="https://unpkg.com/frappe-charts@latest"&gt;&lt;/script&gt;</code></pre>
+		</div>
+
+		<!-- Usage -->
+		<h3 class="mb-3">Usage</h3>
+
+		<p>And include it in your project</p>
+		<pre><code class="hljs javascript">  import { Chart } from "frappe-charts"</code></pre>
+
+		<p>Initialize a new Charts Object</p>
+		<pre><code class="hljs javascript">  new Chart();          // ES6 module
+			// or
+  new frappe.Chart();   // Browser</code></pre>
+	</div>
+</section>
+
+<!-- Wrapper for mounting Vue -->
+<div class="page_content" style="min-height: auto;">
+<section class="section section-padding-bottom section-padding bg-light">
+		<div class="container">
+
+		<h4>Make a Chart</h4>
+		<pre>
+			<code class="hljs javascript">
+  let chart = new frappe.Chart( "#frost-chart", { // or DOM element
+	data: {
+	labels: ["12am-3am", "3am-6am", "6am-9am", "9am-12pm",
+		"12pm-3pm", "3pm-6pm", "6pm-9pm", "9pm-12am"],
+
+	datasets: [
+		{
+			name: "Some Data", chartType: 'bar',
+			values: [25, 40, 30, 35, 8, 52, 17, -4]
+		},
+		{
+			name: "Another Set", chartType: 'bar',
+			values: [25, 50, -10, 15, 18, 32, 27, 14]
+		},
+		{
+			name: "Yet Another", chartType: 'line',
+			values: [15, 20, -3, -15, 58, 12, -17, 37]
+		}
+	],
+
+	yMarkers: [{ label: "Marker", value: 70,
+		options: { labelPos: 'left' }}],
+	yRegions: [{ label: "Region", start: -10, end: 50,
+		options: { labelPos: 'right' }}]
+	},
+
+	title: "My Awesome Chart",
+	type: 'axis-mixed', // or 'bar', 'line', 'pie', 'percentage'
+	height: 300,
+	colors: ['purple', '#ffa3ef', 'light-blue'],
+
+	tooltipOptions: {
+		formatTooltipX: d => (d + '').toUpperCase(),
+		formatTooltipY: d => d + ' pts',
+	}
+  });
+
+  chart.export();
+		</code></pre>
+		<project-demo class="mt-4" data="all-inclusive" v-bind:config="{
+			title: 'My Awesome Chart',
+			type: 'bar',
+			height: 300,
+			colors: ['purple', '#ffa3ef', 'light-blue'],
+			tooltipOptions: {
+				formatTooltipX: d => (d + '').toUpperCase(),
+				formatTooltipY: d => d + ' pts',
+			}
+		}"
+		v-bind:options="[
+			{
+				name: 'type',
+				path: ['type'],
+				type: 'String',
+				states: { 'Line': 'line', 'Bar': 'bar', 'Mixed': 'axis-mixed',
+					'Pie': 'pie', 'Percentage': 'percentage'}
+			}
+		]"
+		v-bind:actions="[
+			{
+				name: 'Export',
+				fn: 'export',
+				args: []
+			}
+		]">
+		</project-demo>
+
+		</div>
+	</section>
+
+	<section class="section section-padding-bottom section-padding">
+		<div class="container">
+
+		<h4>Update Values</h4>
+		<project-demo class="mt-4" data="get-update-data" v-bind:config="{
+				type: 'line',
+				height: 300,
+				colors: ['orange'],
+				lineOptions: {
+					areaFill: 1
+				}
+			}"
+			v-bind:actions="[
+				{
+					name: 'Random Data',
+					fn: 'update',
+					args: [getUpdateData()]
+				},
+				{
+					name: 'Add Value',
+					fn: 'addDataPoint',
+					args: getAddUpdateData()
+				},
+				{
+					name: 'Remove Value',
+					fn: 'removeDataPoint',
+					args: []
+				}
+			]"
+			v-bind:actions="[
+				{
+					name: 'Export',
+					fn: 'export',
+					args: []
+				}
+			]">
+		</project-demo>
+
+		</div>
+	</section>
+
+	<section class="section section-padding-bottom section-padding bg-light">
+		<div class="container">
+
+		<h4>Plot Trends</h4>
+		<project-demo class="mt-4" data="trends-data"
+			v-bind:config="{
+				type: 'line',
+				height: 300,
+				colors: ['green'],
+				axisOptions: {
+					xAxisMode: 'tick',
+					xIsSeries: 1
+				}
+			}"
+			v-bind:options="[
+				{
+					name: 'lineOptions',
+					path: ['lineOptions'],
+					type: 'Map',
+					mapKeys: ['hideLine', 'hideDots', 'heatline', 'areaFill'],
+					states: {
+						'Line': [0, 1, 0, 0],
+						'Dots': [1, 0, 0, 0],
+						'HeatLine': [0, 1, 1, 0],
+						'Area': [0, 1, 0, 1]
+					}
+				}
+			]"
+			v-bind:actions="[
+				{
+					name: 'Export',
+					fn: 'export',
+					args: []
+				}
+			]">
+		</project-demo>
+
+		</div>
+	</section>
+
+	<section class="section section-padding-bottom section-padding">
+		<div class="container">
+
+		<h4>A Month-wise Heatmap</h4>
+		<project-demo class="mt-4" data="heatmap-data" v-bind:config="{
+			title: 'Monthly Distribution',
+			type: 'heatmap',
+			height: 200,
+			discreteDomains: 1,
+			countLabel: 'Level',
+			colors: ['#ebedf0', '#c0ddf9', '#73b3f3', '#3886e1', '#17459e'],
+		}"
+		v-bind:options="[
+			{
+				name: 'Discrete domains',
+				path: ['discreteDomains'],
+				type: 'Boolean',
+				// boolNames: ['Continuous', 'Discrete'],
+				states: { 'Discrete': 1, 'Continuous': 0 }
+			},
+			{
+				name: 'Colors',
+				path: ['colors'],
+				type: 'Array',
+				states: {
+					'Green (Default)': [],
+					'Blue': ['#ebedf0', '#c0ddf9', '#73b3f3', '#3886e1', '#17459e'],
+					'Halloween': ['#ebedf0', '#fdf436', '#ffc700', '#ff9100', '#06001c']
+				}
+			}
+		]"
+		v-bind:actions="[
+			{
+				name: 'Export',
+				fn: 'export',
+				args: []
+			}
+		]">
+		</project-demo>
+		<pre><code class="hljs javascript">
+  let heatmap = new frappe.Chart("#heatmap", {
+	type: 'heatmap',
+	title: "Monthly Distribution",
+	data: {
+	dataPoints: {
+		'1524064033': 8, /* ... */},
+						// object with timestamp-value pairs
+		start: startDate
+		end: endDate      // Date objects
+	},
+	countLabel: 'Level',
+	discreteDomains: 0  // default: 1
+	colors: ['#ebedf0', '#c0ddf9', '#73b3f3', '#3886e1', '#17459e'],
+				// Set of five incremental colors,
+				// preferably with a low-saturation color for zero data;
+				// def: ['#ebedf0', '#c6e48b', '#7bc96f', '#239a3b', '#196127']
+  });
+		</code></pre>
+
+		</div>
+	</section>
+</div>
+
+<section class="section section-padding-top section-padding-bottom bg-light">
+	<div class="container">
+	<h3>Charts Playground</h3>
+	<p class="mt-2">Here's a playground on CodeSandBox you can fidget with.</p>
+	<iframe
+		class="mt-3"
+		src="https://codesandbox.io/embed/frappe-charts-demo-viqud?autoresize=1&codemirror=1&fontsize=14"
+		style="width:100%; height:500px; border: 1px solid rgba(0, 0, 0, 0.125); border-radius: 4px; overflow:hidden;"
+		title="frappe-charts-demo"
+		allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+		sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+	></iframe>
+	</div>
+</section>
+
+
+
+{{ web_blocks([
+		{
+			'template': "Section With CTA",
+			'values': {
+				'title': " Modern, Open Source SVG Charts ",
+				'subtitle': "GitHub-inspired simple and modern SVG charts for the web with zero dependencies.",
+				'cta_label': "Star on GitHub",
+				'cta_url': "https://github.com/frappe/charts",
+				'cta_description': "MIT License",
+				'show_confetti': 1
+			}
+		}
+	])
+}}
+
+{{ include_script('charts-demo.bundle.js') }}
+<script src="/charts/index.js"></script>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block page_content %}
+<!-- no-sidebar -->
+<div class="page-breadcrumbs" data-html-block="breadcrumbs">
+{%- if breadcrumbs is defined -%}{{ breadcrumbs }}{%- endif -%}
+</div>
+
+{% if (status == "Inactive") %}
+<div class="text-muted">
+This Poll is Inactive. You cannot vote on this Poll
+</div>
+{% endif %}
+
+<p class="lead">{{ description }}</p>
+
+<ul class="list-group" style="max-width: 600px;">
+{% for option in sorted_options %}
+	<li class="list-group-item" style="padding-top: 20px; padding-bottom: 20px;">
+		<div class="row">
+			<div class="col-sm-2 text-center">
+				<h3 style="margin: 0px;">{{ (option.votes or 0) + (option.previous_votes or 0) }}</h3>
+				<p class="text-muted small">{{ "Vote" if option.votes==1 else "Votes" }}</p>
+			</div>
+			<div class="col-sm-8">
+				<strong>{{ option.option }}</strong>
+				{% if option.description -%}
+					<p class="text-muted small">{{ option.description }}</p>{% endif %}
+			</div>
+			{% if (status == "Active") %}
+			<div class="col-sm-2">
+				<button class="btn btn-primary pull-right btn-vote" style="margin-top: -7px;"
+					data-option-name="{{ option.name }}">Vote</button>
+			</div>
+			{% endif %}
+
+		</div>
+		<div class="clearfix"></div>
+		<div class="progress" style="margin-top: 10px; height: 10px;">
+			<div class="progress-bar" style="width: {{ (((option.votes or 0) + (option.previous_votes or 0)) * 100 / maxvotes) if maxvotes else 0 }}%">
+			</div>
+		</div>
+	</li>
+{% endfor %}
+</ul>
+
+<script>
+$(".btn-vote").on("click", function() {
+	$.ajax({
+		method: "POST",
+		url:"/api/method/poll.poll.doctype.poll.poll.add_vote",
+		data: {
+			option_name: $(this).attr("data-option-name")
+		},
+		statusCode: {
+			200: function(data) {
+				frappe.msgprint(data.message);
+				setTimeout(function() { window.location.reload(); }, 2000);
+			},
+			500: function(data) {
+				console.log(data.responseJSON.exc);
+			},
+			417: function(data) {
+				console.log(data.responseJSON.exc);
+			}
+		}
+	});
+})
+</script>
+{% endblock %}

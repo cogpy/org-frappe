@@ -1,0 +1,85 @@
+
+<div class="user-content" style="margin-top:20px;">
+	<div class="user-content" >
+		<div class="user-content" style="max-width: 360px; margin:0 auto;">
+			<div class="alert alert-warning" id="message" style="display: none;"></div>
+			<form>
+				<fieldset>
+					<legend> ERPNext-Shopify Connector 
+						<p class="help-box small text-muted hidden-xs" style="font-size:60%; margin:1px 0px;"> Submit Accont Details and connect to ERPNext!! </p>
+					</legend>
+					<fieldset>
+						<label>Shop Name</label>
+						<input class="form-control" type="text" id="shop" placeholder="Shop Name">
+						<p class="help-box small text-muted hidden-xs" style="margin:1px 0px;">eg: erpnext.myshopify.com</p>
+					</fieldset>
+					<fieldset>
+						<label>ERPNext Site Name</label>
+						<input class="form-control" type="text" id="site_name" placeholder="Your Site Name">
+						<p class="help-box small text-muted hidden-xs" style="margin:1px 0px;">eg: demo.erpnext.com</p>
+					</fieldset>
+					<fieldset>
+						<label>ERPNext User Id</label>
+						<input class="form-control" type="text" id="email" placeholder="User ID">
+					</fieldset>
+					<fieldset>
+						<label>Password</label>
+						<input class="form-control" type="password" id="password" placeholder="Password">
+					</fieldset>
+					<div style="text-align:center;">
+						<button id="update_user" type="submit" class="btn btn-primary" style="width:100px;">Submit</button>
+					</div>
+					<br>
+					<div style="text-align:center;">
+						New to Shopify? <a href="https://www.shopify.in/signup"> 
+							<span style="color:#7ab55c;">Sign Up</span></a>
+						<br>
+						New to ERPNext? <a href="https://erpnext.com/">
+							<span style="color:#7575ff;">Sign Up</span></a>
+					</div>
+			</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+<script>
+frappe.ready(function() {
+	$(".navbar").hide();
+	$(".page-header-block").hide();
+	$(".page-breadcrumbs").hide();
+	$("#fullname").val(getCookie("full_name") || "");
+
+	var query_params  = get_query_params() || {};
+	if(query_params['shop']){
+		$("#shop").val(query_params['shop']);
+	}
+
+	$("#update_user").click(function() {
+		frappe.call({
+			method:"erpnext_shopify_broker.erpnext_shopify_broker.doctype.broker_settings.broker_settings.validate_erp_user",
+			type: "POST",
+			args: {
+				shop: geturl($("#shop").val()),
+				site_name: geturl($("#site_name").val()),
+				email: $("#email").val(),
+				password: $("#password").val()
+			},
+			callback: function(r) {
+				if(!r.message.error)
+					window.open(r.message.redirect, "_self");
+				else
+					alert(r.message.error)
+			}
+		});
+		return false;
+	})
+})
+
+function geturl(str){
+	var re = /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n]+)/igm;
+	var m = re.exec(str);
+	return m[0].replace(/.*?:\/\//g, "");
+}
+</script>
+	

@@ -1,0 +1,42 @@
+[
+    {
+        "route": "/frappejs/docs",
+        "title": "Home"
+    },
+    {
+        "route": "/frappejs/docs/app",
+        "title": "Making New App"
+    },
+    {
+        "route": "/frappejs/docs/models",
+        "title": "Models"
+    },
+    {
+        "route": "/frappejs/docs/document",
+        "title": "Documents"
+    },
+    {
+        "route": "/frappejs/docs/server/index",
+        "title": "Server"
+    },
+    {
+        "route": "/frappejs/docs/util",
+        "title": "Utilities"
+    },
+    {
+        "route": "/frappejs/docs/server/backends",
+        "title": "Backends"
+    },
+    {
+        "route": "/frappejs/docs/errors",
+        "title": "Errors"
+    },
+    {
+        "route": "/frappejs/docs/client/index",
+        "title": "UI"
+    },
+    {
+        "route": "/frappejs/docs/testing",
+        "title": "Testing"
+    }
+]

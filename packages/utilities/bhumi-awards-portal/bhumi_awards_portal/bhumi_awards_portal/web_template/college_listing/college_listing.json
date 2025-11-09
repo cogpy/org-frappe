@@ -1,0 +1,31 @@
+{
+ "__unsaved": 1,
+ "creation": "2021-08-21 23:45:25.490465",
+ "docstatus": 0,
+ "doctype": "Web Template",
+ "fields": [
+  {
+   "__unsaved": 1,
+   "fieldname": "social_media_title",
+   "fieldtype": "Data",
+   "label": "Social Media Title",
+   "reqd": 1
+  },
+  {
+   "__unsaved": 1,
+   "fieldname": "social_media_message",
+   "fieldtype": "Small Text",
+   "label": "Social Media Message",
+   "reqd": 1
+  }
+ ],
+ "idx": 0,
+ "modified": "2021-09-05 16:54:50.180507",
+ "modified_by": "Administrator",
+ "module": "Bhumi Awards Portal",
+ "name": "College Listing",
+ "owner": "Administrator",
+ "standard": 1,
+ "template": "",
+ "type": "Section"
+}

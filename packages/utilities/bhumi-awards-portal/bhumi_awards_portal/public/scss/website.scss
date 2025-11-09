@@ -1,0 +1,156 @@
+/* hero section */
+.home {
+	.hero-image {
+		height: 100vh;
+		width: 100vw;
+		position: relative;
+		background-size: cover;
+		background-position: 30% 30%;
+		background-image: url('/assets/bhumi_awards_portal/images/campus_airshot.jpg')
+	}
+
+	.hero-title {
+		max-width: 45rem;
+	}
+
+	.hero-subtitle {
+		text-align: justify;
+		margin-left: 1rem;
+	}
+
+	.hero-content {
+		margin-top: 6rem !important;
+	}
+}
+
+#leaderboard-header .hero-content {
+	margin-top: 6rem !important;
+}
+
+.image-overlay {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	left: 0;
+	background: rgba(0,0,0,0.55);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+/* section with two CTAs */
+.cta-col {
+	text-align: center;
+}
+
+.cta-icon {
+	margin-bottom: 2rem;
+	object-fit: contain;
+}
+
+/* criteria and about section */
+.feature-icon {
+	margin-right: 0.5rem;
+	width: 1.2rem;
+	height: 1.2rem;
+	object-fit: contain;
+}
+
+/* voting section */
+.vote-cta {
+	background-color: var(--light-orange);
+}
+
+/* process section */
+.process-section {
+	background-color: var(--light-green);
+
+	.process-card {
+		width: 80% !important;
+		align-items: center;
+	}
+
+	.process-image {
+		width: 350px;
+		height: 350px;
+	}
+
+	.column {
+		padding: 1.25rem !important;
+	}
+
+	.row {
+		padding: 1.25rem !important;
+	}
+}
+
+/* college listing page */
+#filters-area .form-control {
+	border: 1px solid var(--orange);
+	background-color: white !important;
+}
+
+#college-listing {
+	background-color: var(--light-green);
+}
+
+.img-social-icon {
+	width: 40px;
+	height: 40px;
+}
+
+.social-link {
+	margin-top: 2px;
+	width: 200px;
+	font-size: small;
+	text-align: center;
+}
+
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+.sticky {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 1000;
+	background: white;
+	padding: 20px;
+	border-bottom: 1px solid #E2E6E9;
+}
+
+/* Add some top padding to the page content to prevent sudden movement (as the header gets a new position at the top of the page */
+.sticky + .colleges {
+	padding-top: 102px;
+}
+
+/* mobile view */
+@media (max-width: 767px) {
+	.hero-content {
+		padding: 20px;
+	}
+
+	.hero-subtitle {
+		margin-left: 0;
+	}
+
+	.process-section {
+		.process-card {
+			width: 100% !important;
+		}
+
+		.process-image {
+			width: 300px;
+			height: 300px;
+		}
+
+		.column {
+			padding: 1.25rem 0.25rem !important;
+		}
+
+		.row {
+			padding: 0.25rem !important;
+		}
+	}
+}

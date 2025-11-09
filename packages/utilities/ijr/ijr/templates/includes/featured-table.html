@@ -1,0 +1,151 @@
+<!-- featured-table start -->
+<!-- variables: columns, data -->
+{%- set context = 'featured_table_context_' + frappe.utils.generate_hash(length=4) -%}
+{% set columns = list(columns | rejectattr('hide_condition')) %}
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        let { columns, data } = {{ as_json({'columns': columns, 'data': data }, indent=None) }};
+        let formatters = {};
+        {% for column in columns %}
+        {% if column.format %}
+        formatters.{{ column.id }} = (d, i) => {
+            {% if 'return' in column.format %}
+            {{ column.format }}
+            {% else %}
+            return `{{ column.format }}`;
+            {% endif %}
+        };
+        {% endif %}
+        {% endfor %}
+
+        columns.forEach(col => {
+            if (col.sort == null) {
+                col.sort = true;
+            }
+        })
+
+        Alpine.data('{{ context }}', () => ({
+            columns,
+            originalData: JSON.parse(JSON.stringify(data)),
+            data,
+            sortByColumn: null,
+            sortOrder: null,
+            filters: {},
+            showFilters: false,
+            formatters,
+            sortBy(column_id) {
+                if (this.sortByColumn === column_id) {
+                    if (this.sortOrder == null) {
+                        this.sortOrder = 'asc';
+                    } else if (this.sortOrder === 'asc') {
+                        this.sortOrder = 'desc';
+                    } else if (this.sortOrder === 'desc') {
+                        this.sortOrder = null;
+                        this.sortByColumn = null;
+                    }
+                } else {
+                    this.sortByColumn = column_id;
+                    this.sortOrder = 'asc';
+                }
+                this.processData()
+            },
+            filterData(key, values) {
+                this.filters[key] = values;
+                if (!values?.length) {
+                    delete this.filters[key];
+                }
+                this.processData();
+            },
+            processData() {
+                let data = this.originalData.slice();
+
+                // filters
+                for (let [key, values] of Object.entries(this.filters)) {
+                    if (values?.length) {
+                        data = data.filter((row) => {
+                            return values.includes(row[key]);
+                        });
+                    }
+                }
+
+                // sort
+                if (this.sortOrder != null) {
+                    data = data.sort((a, b) => {
+                        let a_value = a[this.sortByColumn];
+                        let b_value = b[this.sortByColumn];
+                        if (this.sortOrder === 'asc') {
+                            return a_value > b_value ? 1 : -1;
+                        } else {
+                            return a_value < b_value ? 1 : -1;
+                        }
+                    });
+                }
+
+                this.data = data;
+            },
+            columnFilterOptions(column) {
+                return [...new Set(this.originalData.map(d => d[column.id]))]
+            }
+        }))
+    });
+</script>
+{%- set table_classes = resolve_class(class or '') -%}
+<table class="featured-table {{ table_classes }}" x-data="{{ context }}">
+    <thead>
+        <tr>
+            <template x-for="column in columns">
+                <th :width="column.width || ''" :style="{'text-align': column.align || 'left', 'white-space': column.wrapText ? 'normal' : 'nowrap'}" :data-column="column.id">
+                    <div class="flex align-items-center">
+                        <div x-text="column.label"></div>
+                        <div class="ml-auto flex-shrink-0">
+                            <template x-if="column.sort">
+                                <sl-tooltip :content="sortByColumn == column.id ? sortOrder == 'asc' ? 'Sort descending' : 'Reset sorting' : 'Sort ascending'" hoist>
+                                    <sl-icon-button @click="sortBy(column.id)"
+                                        :name="sortByColumn == column.id
+                                            ? sortOrder == 'asc' ? 'sort-up-alt' : 'sort-down-alt'
+                                            : 'list-nested'"
+                                    ></sl-icon-button>
+                                </sl-tooltip>
+                            </template>
+                            <template x-if="column.filter">
+                                <sl-tooltip content="Filter" hoist>
+                                    <sl-icon-button @click="showFilters = !showFilters" name="filter-circle"
+                                        :label="'Filter by ' + column.label">
+                                    </sl-icon-button>
+                                </sl-tooltip>
+                            </template>
+                        </div>
+                    </div>
+                </th>
+            </template>
+        </tr>
+        <tr x-show="showFilters">
+            <template x-for="column in columns">
+                <th>
+                    <template x-if="column.filter">
+                        <sl-select placeholder="Select values to filter" multiple clearable size="small"
+                            x-on:sl-change="filterData(column.id, $event.target.value)">
+
+                            <template x-for="option in columnFilterOptions(column)">
+                                <sl-menu-item x-bind:value="option" x-text="option"></sl-menu-item>
+                            </template>
+                        </sl-select>
+                    </template>
+                </th>
+            </template>
+        </tr>
+    </thead>
+    <tbody>
+        <template x-for="(row, i) in data">
+            <tr>
+                <template x-for="column in columns">
+                    <td :data-column="column.id" :style="{'text-align': column.align || 'left', 'background-color': row[column.id + '_color'] || '', 'white-space': column.wrapText ? 'normal' : 'nowrap' }"
+                        x-html="formatters[column.id] ? formatters[column.id](row, i) : (row[column.id + '_formatted'] || row[column.id])">
+                    </td>
+                </template>
+            </tr>
+        </template>
+    </tbody>
+</table>
+<!-- featured-table end -->

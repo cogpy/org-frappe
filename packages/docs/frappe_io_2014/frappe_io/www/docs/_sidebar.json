@@ -1,0 +1,9 @@
+[
+	{"title": "Before you Start", "name": "docs/tutorials"},
+	{"title": "Tutorial 1", "name": "docs/guide"},
+	{"title": "Tutorial 2", "name": "docs/guide-chat"},
+	{"title": "User Guide", "name": "docs/user-guide"},
+	{"title": "API", "name": "docs/api"},
+	{"title": "Models Reference", "name": "docs/models"},
+	{"title": "Knowledge Base", "name": "kb"}
+]

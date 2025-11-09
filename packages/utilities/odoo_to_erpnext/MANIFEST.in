@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include odoo_to_erpnext *.css
+recursive-include odoo_to_erpnext *.csv
+recursive-include odoo_to_erpnext *.html
+recursive-include odoo_to_erpnext *.ico
+recursive-include odoo_to_erpnext *.js
+recursive-include odoo_to_erpnext *.json
+recursive-include odoo_to_erpnext *.md
+recursive-include odoo_to_erpnext *.png
+recursive-include odoo_to_erpnext *.py
+recursive-include odoo_to_erpnext *.svg
+recursive-include odoo_to_erpnext *.txt
+recursive-exclude odoo_to_erpnext *.pyc

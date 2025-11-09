@@ -1,0 +1,8 @@
+.DS_Store
+*.pyc
+*.egg-info
+*.swp
+tags
+ijr/docs/current
+node_modules/
+ijr/public/dist

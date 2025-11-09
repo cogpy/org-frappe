@@ -1,0 +1,136 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "creation": "2022-07-26 16:45:46.370194",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "indicator_id",
+  "indicator_name",
+  "pillar",
+  "theme",
+  "ijr_number",
+  "year",
+  "state",
+  "region_code",
+  "raw_data_sequence",
+  "raw_data_name",
+  "raw_data_value",
+  "raw_data_unit",
+  "raw_data_value_decimals"
+ ],
+ "fields": [
+  {
+   "fetch_from": "indicator_id.indicator_name",
+   "fieldname": "indicator_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Indicator Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "indicator_id",
+   "fieldtype": "Link",
+   "label": "Indicator ID",
+   "options": "State Indicator"
+  },
+  {
+   "fetch_from": "indicator_id.pillar",
+   "fieldname": "pillar",
+   "fieldtype": "Link",
+   "label": "Pillar",
+   "options": "Pillar",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "indicator_id.theme",
+   "fieldname": "theme",
+   "fieldtype": "Link",
+   "label": "Theme",
+   "options": "Theme",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ijr_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "IJR Number"
+  },
+  {
+   "fieldname": "year",
+   "fieldtype": "Data",
+   "label": "Year"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "State",
+   "options": "State"
+  },
+  {
+   "fetch_from": "state.code",
+   "fieldname": "region_code",
+   "fieldtype": "Data",
+   "label": "Region Code",
+   "read_only": 1
+  },
+  {
+   "fieldname": "raw_data_sequence",
+   "fieldtype": "Int",
+   "label": "Raw Data Sequence"
+  },
+  {
+   "fieldname": "raw_data_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Raw Data Name"
+  },
+  {
+   "fieldname": "raw_data_value",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Raw Data Value"
+  },
+  {
+   "fieldname": "raw_data_unit",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Raw Data Unit"
+  },
+  {
+   "fieldname": "raw_data_value_decimals",
+   "fieldtype": "Int",
+   "label": "Raw Data Value Decimals"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-03-16 15:47:55.245395",
+ "modified_by": "Administrator",
+ "module": "India Justice Report",
+ "name": "State Indicator Raw Data",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "raw_data_sequence",
+ "sort_order": "ASC",
+ "states": [],
+ "title_field": "indicator_name"
+}
