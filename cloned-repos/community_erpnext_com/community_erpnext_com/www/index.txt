@@ -1,6 +1,0 @@
-service-providers
-jobs
-apps
-faq
-contribute
-terms

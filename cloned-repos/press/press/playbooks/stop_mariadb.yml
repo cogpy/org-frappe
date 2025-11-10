@@ -1,7 +1,0 @@
----
-- name: Stop MariaDB
-  hosts: all
-  become: yes
-  become_user: root
-  roles:
-    - role: stop_mariadb

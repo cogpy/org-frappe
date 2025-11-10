@@ -1,3 +1,0 @@
-meeting.__init__
-meeting.api
-meeting.hooks

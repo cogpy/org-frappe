@@ -1,6 +1,0 @@
----
-- name: Restore Files from Existing Bench
-  hosts: all
-  gather_facts: yes
-  roles:
-    - role: get_files

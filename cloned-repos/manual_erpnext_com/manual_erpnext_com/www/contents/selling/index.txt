@@ -1,3 +1,0 @@
-quotation
-sales-order
-setup

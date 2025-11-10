@@ -1,8 +1,0 @@
----
-- name: Perform MariaDB Physical Backup
-  hosts: all
-  become: yes
-  become_user: root
-
-  roles:
-    - role: primary

@@ -1,5 +1,0 @@
-user-guide
-testimonials
-industries
-countries
-stories

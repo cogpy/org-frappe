@@ -1,3 +1,0 @@
-letter_head
-print_format
-print_settings

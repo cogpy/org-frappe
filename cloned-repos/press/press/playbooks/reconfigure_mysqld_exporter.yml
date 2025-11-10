@@ -1,8 +1,0 @@
----
-- name: Reconfigure MySQLd Exporter
-  hosts: all
-  become: yes
-  become_user: root
-  gather_facts: yes
-  roles:
-    - role: mysqld_exporter

@@ -1,8 +1,0 @@
----
-- name: Setup Secondary Proxy Server
-  hosts: all
-  become: yes
-  become_user: frappe
-
-  roles:
-    - role: secondary_proxy

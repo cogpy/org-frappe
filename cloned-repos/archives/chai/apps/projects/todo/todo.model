@@ -1,7 +1,0 @@
-{
-	'attributes': {
-		'description':{ 'type': 'Text', 'mandatory': True },
-		'status':{ 'type':'Select', 'options':['Open','Closed'] },
-		'project': {'type':'Link', 'range':'todo.models.project'}
-	}
-}

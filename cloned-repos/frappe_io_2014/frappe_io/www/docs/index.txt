@@ -1,6 +1,0 @@
-tutorials
-guide
-guide-chat
-user-guide
-api
-models

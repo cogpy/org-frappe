@@ -1,5 +1,0 @@
-bulk_email
-email_account
-email_alert
-email_alert_recipient
-standard_reply

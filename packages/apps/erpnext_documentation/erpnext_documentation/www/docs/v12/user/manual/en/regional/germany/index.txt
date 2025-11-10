@@ -1,2 +1,0 @@
-datev-settings
-datev-export

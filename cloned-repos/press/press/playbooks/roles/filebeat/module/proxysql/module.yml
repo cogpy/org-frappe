@@ -1,5 +1,0 @@
-dashboards:
-- id: Filebeat-proxysql-audit-Dashboard
-  file: Filebeat-proxysql-audit.json
-- id: Filebeat-proxysql-events-Dashboard
-  file: Filebeat-proxysql-events.json

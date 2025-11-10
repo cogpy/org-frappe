@@ -1,5 +1,0 @@
-migrations
-packages
-how-to-migrate-doctype-changes-to-production
-email-notifications-for-failed-background-jobs
-how-to-enable-social-logins

@@ -1,7 +1,0 @@
-- type: log
-  enabled: true
-
-  pipeline: monitor
-
-  paths:
-    - /home/frappe/benches/*/logs/monitor.json.log

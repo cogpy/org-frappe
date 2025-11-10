@@ -1,3 +1,0 @@
-erpnext_shopify.config.docs
-erpnext_shopify.config
-erpnext_shopify.config.setup

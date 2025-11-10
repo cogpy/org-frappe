@@ -1,8 +1,0 @@
----
-- name: Setup Deadlock Logger
-  hosts: all
-  become: yes
-  become_user: root
-  gather_facts: yes
-  roles:
-    - role: deadlock_logger

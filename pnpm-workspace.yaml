@@ -8,3 +8,6 @@ packages:
   - 'packages/docs/*'
   - 'packages/regional/*'
   - 'packages/utilities/*'
+  - 'packages/archive/*'
+  - 'frappe'
+  - 'realtime'

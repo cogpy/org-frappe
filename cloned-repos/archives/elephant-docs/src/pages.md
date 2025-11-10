@@ -1,5 +1,0 @@
-# Pages
-
-- Concept
-- Permission
-- Routing

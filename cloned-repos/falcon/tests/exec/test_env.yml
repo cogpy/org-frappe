@@ -1,8 +1,0 @@
-exec:
-  runtime: python
-  code: |
-    import os
-    print(os.getenv("DATABASE_URL"))
-  env:
-    DATABASE_URL: "sqlite://test.db"
-expected_output: "sqlite://test.db\n"

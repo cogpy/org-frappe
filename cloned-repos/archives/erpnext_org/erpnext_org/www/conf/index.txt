@@ -1,4 +1,0 @@
-index
-videos
-pictures
-venue

@@ -1,4 +1,0 @@
-{
-	"js/press-datatable.js": ["public/js/datatable.js"],
-	"press/js/marketplace.js": ["public/marketplace/js/index.js"]
-}

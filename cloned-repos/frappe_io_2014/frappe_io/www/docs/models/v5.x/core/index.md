@@ -1,5 +1,0 @@
-# Core
-
-{index}
-
-<!-- static -->

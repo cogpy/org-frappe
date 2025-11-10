@@ -1,8 +1,0 @@
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-deploy_key
-deploy_key.pub
-venv
-*.egg-info

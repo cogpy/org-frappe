@@ -1,7 +1,0 @@
----
-- name: Restart mysqld/mariadb service
-  hosts: all
-  become: yes
-  become_user: root
-  roles:
-    - role: restart_mysql

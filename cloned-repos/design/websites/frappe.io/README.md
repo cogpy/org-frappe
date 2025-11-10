@@ -1,1 +1,0 @@
-## Redesigning frappe website WIP

@@ -1,4 +1,0 @@
-- module: proxysql
-  # All logs
-  {fileset}:
-    enabled: true

@@ -1,5 +1,0 @@
----
-- name: Configure ssh session activites logging
-  hosts: all
-  roles:
-    - role: configure_ssh_logging

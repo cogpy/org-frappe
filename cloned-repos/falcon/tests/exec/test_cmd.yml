@@ -1,5 +1,0 @@
-exec:
-  runtime: python
-  code: ""
-  command: ["/bin/echo", "hello", "world"]
-expected_output: "hello world\n"

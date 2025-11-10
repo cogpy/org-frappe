@@ -1,8 +1,0 @@
----
-- name: Failover from Primary to Secondary
-  hosts: all
-  become: yes
-  become_user: root
-
-  roles:
-    - role: failover

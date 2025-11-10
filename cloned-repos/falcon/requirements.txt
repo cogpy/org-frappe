@@ -1,8 +1,0 @@
-starlette
-aiofiles
-uvicorn[standard]
-Jinja2
-aiodocker
-flake8
-requests
-python-multipart

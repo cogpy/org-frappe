@@ -1,7 +1,0 @@
----
-- name: Set memory limits for MariaDB
-  hosts: all
-  become: yes
-  become_user: root
-  roles:
-    - role: mariadb_systemd_limits

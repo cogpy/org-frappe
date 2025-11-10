@@ -1,5 +1,0 @@
-<!-- add-breadcrumbs -->
-
-## Germany
-
-{index}

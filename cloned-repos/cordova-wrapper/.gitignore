@@ -1,7 +1,0 @@
-plugins
-platforms
-.DS_Store
-node_modules
-package-lock.json
-release
-.idea
