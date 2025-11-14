@@ -1,0 +1,6 @@
+.venv
+.vscode
+__pycache__
+tagger.ini
+config.json
+tagger_nginx.conf

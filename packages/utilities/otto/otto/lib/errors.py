@@ -1,2 +1,0 @@
-class InteractionError(Exception):
-	pass

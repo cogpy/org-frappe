@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: frappe\n"
 "Report-Msgid-Bugs-To: hello@frappe.io\n"
-"POT-Creation-Date: 2025-10-26 10:35+0000\n"
-"PO-Revision-Date: 2025-10-30 09:07\n"
+"POT-Creation-Date: 2025-11-09 10:36+0000\n"
+"PO-Revision-Date: 2025-11-10 14:29\n"
 "Last-Translator: hello@frappe.io\n"
 "Language-Team: Serbian (Cyrillic)\n"
 "MIME-Version: 1.0\n"
@@ -289,7 +289,7 @@ msgstr "Чланак"
 msgid "Assign to"
 msgstr "Додели"
 
-#: desk/src/components/ticket-agent/AssignToBody.vue:64
+#: desk/src/components/ticket-agent/AssignToBody.vue:65
 msgid "Assign to me"
 msgstr "Додели себи"
 
@@ -334,7 +334,7 @@ msgstr "Правила доделе"
 msgid "Assignment Rules automatically route tickets to the right team members based on predefined conditions."
 msgstr "Правила додељивања аутоматски усмеравају тикете ка одговарајућим члановима тима на основу унапред дефинисаних услова."
 
-#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:278
+#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:283
 msgid "Assignment Schedule"
 msgstr "Распоред додељивања"
 
@@ -484,11 +484,11 @@ msgstr "Дугме"
 msgid "Call Details"
 msgstr "Детаљи позива"
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:607
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:599
 msgid "Can not send email. No sender email set up!"
 msgstr "Није могуће послати имејл. Није подешен имејл пошиљаоца!"
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:500
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:508
 msgid "Cannot delete the default SLA. At least one SLA must be marked as default."
 msgstr "Није могуће обрисати подразумевани споразум о нивоу услуге. Барем један споразум мора бити означен као подразумевани."
 
@@ -525,7 +525,7 @@ msgstr "Канали"
 msgid "Choose how tickets are distributed among selected assignees."
 msgstr "Изаберите како се тикети распоређују међу изабраним извршиоцима."
 
-#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:282
+#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:287
 msgid "Choose the days of the week when this rule should be active."
 msgstr "Изаберите дане у недељи када ово правило треба да буде активно."
 
@@ -533,7 +533,7 @@ msgstr "Изаберите дане у недељи када ово правил
 msgid "Choose which tickets are affected by this assignment rule."
 msgstr "Изаберите који тикет подлеже овом правилу додељивања."
 
-#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:209
+#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:211
 msgid "Choose which tickets are affected by this un-assignment rule."
 msgstr "Изаберите који тикети подлежу правилу уклањања додељивања."
 
@@ -559,7 +559,7 @@ msgstr "Затвори"
 msgid "Closed"
 msgstr "Затворено"
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:328
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:321
 msgid "Closed or rated tickets cannot be updated by non-agents"
 msgstr "Затворени или оцењени тикети не могу бити ажурирани од стране особа које нису агенти"
 
@@ -634,15 +634,15 @@ msgstr "Садржај"
 msgid "Content Type"
 msgstr "Врста садржаја"
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:625
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:617
 msgid "Could not an email due to: {0}"
 msgstr "Није могуће послати имејл због: {0}"
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:785
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:775
 msgid "Could not send an acknowledgement email due to: {0}"
 msgstr "Није могуће послати имејл потврду пријема због: {0}"
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:162
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:161
 msgid "Could not send feedback email,due to: {0}"
 msgstr "Неуспешно слање имејла са повратном информацијом због: {0}"
 
@@ -890,7 +890,11 @@ msgstr "Унесите назив за ову HD листу празника з�
 msgid "Error moving article to category"
 msgstr "Грешка при премештању чланка у категорију"
 
-#: helpdesk/overrides/email_account.py:69
+#: helpdesk/overrides/email_account.py:43
+msgid "Error processing email at index {0}, message: {1}"
+msgstr "Грешка при обради имејла на индексу {0}, порука: {1}"
+
+#: helpdesk/overrides/email_account.py:90
 msgid "Error while connecting to email account {0}"
 msgstr "Грешка при повезивању са имејл налогом {0}"
 
@@ -950,7 +954,7 @@ msgstr "Оцена повратне информације"
 msgid "Feedback Trend"
 msgstr "Тренд повратних информација"
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:160
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:159
 msgid "Feedback email has been sent to the customer"
 msgstr "Имејл са повратном информацијом је послат клијенту"
 
@@ -1407,7 +1411,7 @@ msgstr "Долазни позив"
 msgid "Instantly send e-mail"
 msgstr "Слање имејла тренутно"
 
-#: helpdesk/utils.py:32
+#: helpdesk/utils.py:33
 msgid "Insufficient Permission for {0}"
 msgstr "Недовољна овлашћења за {0}"
 
@@ -1504,7 +1508,7 @@ msgid "Last user assigned by this rule"
 msgstr "Последњи корисник којем је тикет додељен по овом правилу"
 
 #: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:145
-#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:217
+#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:219
 msgid "Learn about conditions"
 msgstr "Сазнајте више о условима"
 
@@ -1512,7 +1516,7 @@ msgstr "Сазнајте више о условима"
 #. Source'
 #: helpdesk/helpdesk/doctype/hd_support_search_source/hd_support_search_source.json
 msgid "Link"
-msgstr "Повезивање"
+msgstr "Линк"
 
 #. Label of the link_options_sb (Section Break) field in DocType 'HD Support
 #. Search Source'
@@ -1593,7 +1597,7 @@ msgstr "Месечно"
 #: helpdesk/helpdesk/doctype/hd_organization/hd_organization.json
 #: helpdesk/helpdesk/doctype/hd_team/hd_team.json
 msgid "Name"
-msgstr "Име"
+msgstr "Назив"
 
 #. Label of the name_weight (Int) field in DocType 'HD Settings'
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
@@ -1614,7 +1618,7 @@ msgstr "Назив новог правила додељивања"
 msgid "No Team"
 msgstr "Без тима"
 
-#: desk/src/components/ticket-agent/AssignTo.vue:12
+#: desk/src/components/ticket-agent/AssignTo.vue:13
 msgid "No assignees"
 msgstr "Нема извршилаца"
 
@@ -1626,7 +1630,7 @@ msgstr "Нема ставки у листи"
 msgid "No results found"
 msgstr "Нема резултата"
 
-#: helpdesk/utils.py:165
+#: helpdesk/utils.py:166
 msgid "Not Allowed"
 msgstr "Није дозвољено"
 
@@ -1642,7 +1646,7 @@ msgid "Notification Settings"
 msgstr "Подешавање обавештења"
 
 #: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:154
-#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:232
+#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:234
 msgid "Old Condition"
 msgstr "Стари услов"
 
@@ -1760,7 +1764,7 @@ msgstr "Резервисани текст"
 msgid "Please add this priority in the <a href='/app/hd-service-level-agreement'>required SLA documents</a>"
 msgstr "Молимо Вас да додате овај приоритет у <a href='/app/hd-service-level-agreement'> обавезне документе споразума о нивоу услуге</a>"
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:318
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:326
 msgid "Please add {0} priority in {1} SLA"
 msgstr "Молимо Вас да додате приоритет {0} у споразум о нивоу услуге {1}"
 
@@ -2161,7 +2165,7 @@ msgstr "Индекс претраге није доступан. Молимо В
 msgid "Search query must be at least 2 characters"
 msgstr "Упит за претрагу мора имати најмање 2 карактера"
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:157
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:165
 msgid "Select a Default Priority."
 msgstr "Изаберите подразумевани приоритет."
 
@@ -2205,7 +2209,7 @@ msgstr "Поставите време решавања за приоритет {
 msgid "Set Response Time for Priority {0} in row {1}."
 msgstr "Постави време одговора за приоритет {0} у реду {1}."
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:124
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:123
 msgid "Setting <strong>{0}</strong> as the default SLA removes <strong>{1}</strong> as the default SLA. You’ll need to add a condition in <strong>{1}</strong> for the SLA to work."
 msgstr "Постављање <strong>{0}</strong> као подразумевани споразум о нивоу услуге уклања <strong>{1}</strong> као подразумевани споразум. Неопходно је да додате услов у <strong>{1}</strong> да би споразум о нивоу услуге могао да функционише."
 
@@ -2291,7 +2295,7 @@ msgstr "Датум почетка"
 msgid "Start Time"
 msgstr "Време почетка"
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:99
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:98
 msgid "Start Time can't be greater than or equal to End Time in row <u>{0}</u>."
 msgstr "Време почетка не може бити веће или једнако времену завршетка у реду <u>{0}</u>."
 
@@ -2487,9 +2491,21 @@ msgstr "Назив шаблона"
 msgid "The 'Closed' status cannot be renamed."
 msgstr "Статус 'Затворено' не може се преименовати."
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:147
-msgid "The Condition '{0}' is invalid: {1}"
-msgstr "Услов '{0}' је неважећи: {1}"
+#: helpdesk/extends/assignment_rule.py:18
+msgid "The Assign Condition JSON '{0}' is invalid: </br> {1}"
+msgstr "JSON додељеног услова '{0}' је неважећи: </br> {1}"
+
+#: helpdesk/extends/assignment_rule.py:26
+msgid "The Unassign Condition JSON '{0}' is invalid: </br> {1}"
+msgstr "JSON услова за уклањање доделе '{0}' је неважећи: </br> {1}"
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:145
+msgid "The assignment condition '{0}' is invalid: {1}"
+msgstr "Услов доделе '{0}' је неважећи: {1}"
+
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:152
+msgid "The assignment condition json '{0}' is invalid: {1}"
+msgstr "JSON услов доделе '{0}' је неважећи: {1}"
 
 #: helpdesk/helpdesk/doctype/hd_service_holiday_list/hd_service_holiday_list.py:54
 msgid "The holiday on {0} is not between From Date and To Date"
@@ -2619,7 +2635,7 @@ msgstr "Врста тикета"
 msgid "Ticket does not exist."
 msgstr "Тикет не постоји."
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:318
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:311
 msgid "Ticket must be resolved with a feedback"
 msgstr "Тикет мора бити решен са повратном информацијом"
 
@@ -2639,7 +2655,7 @@ msgstr "Врста тикета"
 
 #. Label of the is_ticket_type_mandatory (Check) field in DocType 'HD Settings'
 #: helpdesk/helpdesk/doctype/hd_settings/hd_settings.json
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:295
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:293
 msgid "Ticket type is mandatory"
 msgstr "Врста тикета је обавезна"
 
@@ -2760,7 +2776,7 @@ msgstr "Врста"
 msgid "URL/Method"
 msgstr "URL/Метод"
 
-#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:204
+#: desk/src/components/Settings/Assignment Rules/AssignmentRuleView.vue:206
 msgid "Unassignment condition"
 msgstr "Услов уклањања додељивања"
 
@@ -2838,7 +2854,7 @@ msgstr "Путем портала за клијенте"
 #. Label of the views (Int) field in DocType 'HD Article'
 #: helpdesk/helpdesk/doctype/hd_article/hd_article.json
 msgid "Views"
-msgstr "Прикази"
+msgstr "Прегледи"
 
 #. Option for the 'Color' (Select) field in DocType 'HD Ticket Status'
 #: helpdesk/helpdesk/doctype/hd_ticket_status/hd_ticket_status.json
@@ -2882,7 +2898,7 @@ msgstr "Реч"
 msgid "Workday"
 msgstr "Радни дан"
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:110
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:109
 msgid "Workday {0} has been repeated."
 msgstr "Радни дан {0} је поновљен."
 
@@ -2912,11 +2928,11 @@ msgstr "Жута"
 msgid "You are not allowed to view this dashboard data."
 msgstr "Није Вам дозвољено да видите податке са ове контролне табле."
 
-#: helpdesk/utils.py:164
+#: helpdesk/utils.py:165
 msgid "You are not permitted to access this resource."
 msgstr "Немате дозволу да приступите овом ресурсу."
 
-#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:530
+#: helpdesk/helpdesk/doctype/hd_ticket/hd_ticket.py:522
 msgid "You are not permitted to add a comment"
 msgstr "Није Вам дозвољено да додате коментар"
 
@@ -2924,7 +2940,7 @@ msgstr "Није Вам дозвољено да додате коментар"
 msgid "You can change the default calling medium from the settings"
 msgstr "Можете променити подразумевано средство за позивање у подешавањима"
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:137
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:136
 msgid "You cannot disable the default SLA."
 msgstr "Не можете онемогућити подразумевани споразум о нивоу услуге."
 
@@ -2936,7 +2952,7 @@ msgstr "Не можете поставити више од једног подр
 msgid "You have already provided feedback for this ticket."
 msgstr "Већ сте дали повратну информацију за овај тикет."
 
-#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:131
+#: helpdesk/helpdesk/doctype/hd_service_level_agreement/hd_service_level_agreement.py:130
 msgid "You must set one SLA as Default. Please check the Default SLA option."
 msgstr "Морате поставити један споразум о нивоу услуге као подразумевани. Молимо Вас да означите опцију подразумевани споразум о нивоу услуге."
 

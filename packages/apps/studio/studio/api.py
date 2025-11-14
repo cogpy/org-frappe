@@ -1,0 +1,164 @@
+from typing import Literal
+
+import frappe
+from frappe import _
+from frappe.client import get_value
+from frappe.model import display_fieldtypes, no_value_fields, table_fields
+
+
+@frappe.whitelist()
+def get_document(doctype: str, filters: dict | str) -> dict:
+	if isinstance(filters, str):
+		filters = frappe.parse_json(filters)
+
+	document = get_value(doctype, filters, "name")
+	if document:
+		return document
+
+	if "name" in filters:
+		del filters["name"]
+		document = frappe.get_list(doctype, filters=filters, pluck="name", limit=1)
+		return document[0] if document else None
+
+	return None
+
+
+@frappe.whitelist()
+def get_doctype_fields(doctype: str) -> list[dict]:
+	fields = frappe.get_meta(doctype).fields
+	# find the name field
+	name_field = next((field for field in fields if field.fieldname == "name"), None)
+	if not name_field:
+		name_field = frappe._dict(
+			{
+				"fieldname": "name",
+				"fieldtype": "Data",
+				"label": "ID",
+			}
+		)
+		fields.append(name_field)
+
+	return [
+		field
+		for field in fields
+		if field.fieldtype not in ((set(no_value_fields) | set(display_fieldtypes)) - set(table_fields))
+	]
+
+
+@frappe.whitelist()
+def get_whitelisted_methods(doctype: str) -> list[str]:
+	from frappe import is_whitelisted
+	from frappe.model.base_document import get_controller
+
+	controller = get_controller(doctype)
+	whitelisted_methods = []
+
+	for method in controller.__dict__:
+		if callable(getattr(controller, method)):
+			try:
+				is_whitelisted(getattr(controller, method))
+				whitelisted_methods.append(method)
+			except Exception:
+				# not whitelisted
+				continue
+
+	return whitelisted_methods
+
+
+@frappe.whitelist()
+def get_sort_fields(doctype: str):
+	fields = frappe.get_meta(doctype).fields
+	fields = [field for field in fields if field.fieldtype not in no_value_fields]
+	fields = [
+		{
+			"label": _(field.label),
+			"value": field.fieldname,
+			"fieldname": field.fieldname,
+		}
+		for field in fields
+		if field.label and field.fieldname
+	]
+
+	standard_fields = [
+		{"label": "Created On", "fieldname": "creation"},
+		{"label": "Last Modified", "fieldname": "modified"},
+		{"label": "Modified By", "fieldname": "modified_by"},
+		{"label": "Owner", "fieldname": "owner"},
+	]
+
+	for field in standard_fields:
+		field["label"] = _(field["label"])
+		field["value"] = field["fieldname"]
+		fields.append(field)
+
+	return fields
+
+
+@frappe.whitelist()
+def check_app_permission() -> bool:
+	if frappe.session.user == "Administrator":
+		return True
+	if frappe.has_permission("Studio App", ptype="write") and frappe.has_permission(
+		"Studio Page", ptype="write"
+	):
+		return True
+	return False
+
+
+@frappe.whitelist()
+def get_app_components(app_name: str, field: Literal["blocks", "draft_blocks"] = "blocks") -> set[str]:
+	import re
+
+	from studio.constants import DEFAULT_COMPONENTS, NON_VUE_COMPONENTS
+
+	filters = dict(studio_app=app_name, published=1)
+	filters[field] = ("is", "set")
+
+	pages = frappe.get_all(
+		"Studio Page",
+		filters=filters,
+		pluck=field,
+	)
+	if not pages:
+		return set()
+	components = set(DEFAULT_COMPONENTS)
+
+	def add_h_function_components(text: str) -> set[str]:
+		"""Extract component names from h(ComponentName...) function calls"""
+		pattern = r"\bh\(\s*([A-Z][a-zA-Z0-9_]*)"
+
+		matches = re.findall(pattern, text)
+		for match in matches:
+			components.add(match)
+
+	def add_block_components(block: dict):
+		if block.get("isStudioComponent"):
+			add_studio_components(block)
+		if block.get("componentName") not in NON_VUE_COMPONENTS:
+			components.add(block.get("componentName"))
+		for child in block.get("children", []):
+			add_block_components(child)
+
+		if slots := block.get("componentSlots"):
+			for slot in slots.values():
+				if isinstance(slot.get("slotContent"), str):
+					continue
+				for slot_child in slot.get("slotContent"):
+					add_block_components(slot_child)
+
+	def add_studio_components(block: dict):
+		component_block = frappe.db.get_value("Studio Component", block.get("componentName"), "block")
+		if isinstance(component_block, str):
+			component_block = frappe.parse_json(component_block)
+		add_block_components(component_block)
+
+	for blocks in pages:
+		if not blocks:
+			continue
+		if isinstance(blocks, str):
+			add_h_function_components(blocks)
+			blocks = frappe.parse_json(blocks)
+		root_block = blocks[0]
+		add_block_components(root_block)
+
+	return components

@@ -1,4 +1,0 @@
-student
-schedule
-fees
-setup

@@ -1,0 +1,268 @@
+import { Selector } from 'testcafe';
+import f from '../../lib';
+
+const video_title = "Seralized Inventory"
+
+
+fixture(video_title)
+    .page ("http://gadgets.erpnext.com/login");
+
+test(video_title, async t => {
+	
+	await f.login('michael.corleone@gadgets.com', '1234')
+	await f.setTestSpeed(0.75).wait(500)
+	await f.use_voice("Samantha")
+
+    await f.toggle_speak(true)
+	
+	await f.speak(`
+
+			Hi.
+
+			Welcome to E R P Next tutorials.
+
+			In this tutorial, we will learn how to track serialized inventory in E R P Next.
+			`)
+
+	await f.add_slide({
+			title: "Serialized Inventory",
+			})
+
+	await f.speak(`If you assign a unique value or I D to each unit of an
+				 item, then you should set that item as a serialized item.`)
+
+	await f.remove_slide()
+		
+	await f.speak(`Let's check how an item can be set as a serialized item.`)
+		
+	await f.search("item", "Item List")
+		
+	await f.click_list_item("iPhone X")
+		
+	await f.pause(2)
+
+	await f.scroll_to_section("Serial Nos and Batches")
+		
+	await f.click_section("Serial Nos and Batches")
+		
+	await f.hover_element("label", "Has Serial No")
+	
+	await f.speak(`Check this field to set this item as a serialized Item.`)
+		
+	await f.fill_field("Has Serial No")
+		
+	await f.hover_element("label","Serial Number Series")
+		
+	await f.speak(`If you want to generate serial numbers based on the series, 
+			then mention the series in this field.
+			
+			However, if this is a bought item, which comes with the unique 
+			serial number, then you should leave this field blank.
+		`)
+	
+	await f.scroll(0)
+		
+	await f.speak(`Let's save this item.`)
+		
+	await f.click_primary_button("Save")
+		
+	await f.goto_desk()
+		
+	await f.add_slide({
+			title: "Opening Balance for Serialized Item",
+			})
+
+	await f.speak(`For the serialized Item, opening balance is updated via Stock Entry.`)
+
+	await f.remove_slide()
+			
+	await f.search("new stock ent", "New Stock Entry")
+			
+	await f.speak(`Select Material Receipt as a purpose.`)
+			
+	await f.fill_field("Purpose", "Material Receipt")
+			
+	await f.hover_element("label","Posting Date")
+			
+	await f.hover_element("label","Posting Time")
+			
+	await f.hover_element("label","Edit Posting Date and Time")
+			
+	await f.speak(`Update posting date and time as needed.`)
+			
+	await f.hover_element("label","Default Target Warehouse")
+			
+	await f.speak(`Select a Warehouse in which opening stock is to be updated.`)
+			
+	await f.fill_field("Default Target Warehouse", "sto", "Stores - GTPL")
+			
+	await f.speak(`Select a serialized item.`)
+			
+	await f.open_row("items", 1)
+			
+	await f.fill_field("Item Code", "iPhone X", "iphone")
+			
+	await f.fill_field("Qty", "2")
+			
+	await f.hover_element("label", "Serial No")
+			
+	await f.speak(`If you have entered two quantities, then two serial numbers 
+			should be entered here.`)
+
+	await f.pause(2)
+
+	await f.fill_field("serial_no", "8")
+
+	await f.pressKey(`E 7 T 4 R O 8 3 O 9 3 4 9 F H enter 7 G 5 4 T C G C 7 9 4 7 G X E 6`)
+
+	await f.hover_element("label", "Difference Account")
+
+	await f.speak(`Select an account in which opening balance will be posted
+			for an item.`)
+
+	await f.fill_field("Difference Account", "Temporary Opening - GTPL", "temporary opening")
+
+	await f.close_row()
+
+	await f.speak(`Let's save and submit this Stock Entry.`)
+
+	await f.click_primary_button("Save")
+
+	await f.click_primary_button("Submit")
+
+	await f.click_primary_button("Yes")
+
+	await f.pause(2)
+
+	await f.speak(`These are the serial numbers which are created for this item.`)
+
+	await f.close_modal()
+
+	await f.search("serial no", "Serial No List")
+
+	await f.hover_element("a", "7G54TCGC7947GXE6")
+
+	await f.speak(`These are the serial numbers which were created based on stock 
+			entry made for updating opening stock balance of a serialized item.`)
+
+	await f.click_list_item("7G54TCGC7947GXE6")
+
+	await f.speak(`In the serial number master, basic item details are updated.`)
+
+	await f.scroll_to_section("Purchase / Manufacture Details")
+
+	await f.speak(`In this section, purchase or manufacturing details are captured 
+			for this serial number.`)
+
+	await f.speak(`Now, let's check how serialized numbers can be auto-generated based
+            on naming series.`)
+
+    await f.add_slide({
+        title: "Autogeneration of Serial Nos.",
+            })
+            
+    await f.speak(`You can enable Naming Series based serialization for the
+            items which are manufactured in-house.`)
+            
+    await f.remove_slide()
+
+    await f.search("item", "Item List")
+
+    await f.click_list_item("OnePlus 6 8GB")
+
+    await f.pause(2)
+
+    await f.scroll_to_section("Serial Nos and Batches")
+        
+   // await f.click_section("Serial Nos and Batches")
+
+    await f.hover_element("label","Serial Number Series")
+
+    await f.speak(`This is a naming series based on which Serial numbers are
+            autogenerated.`)
+
+    await f.search("stock entry", "Stock Entry List")
+
+    await f.click_list_item("Manufacture")
+
+    await f.pause(1)
+
+    await f.hover_element("label", "Production Order")
+
+    await f.speak(`This is a manufacture entry created for the serialized item.
+            For help on how to manage a production order, check relevant help video.
+            `)
+
+    await f.scroll_to_section("Items")
+
+    await f.pause(2)
+    
+    await f.speak(`let's submit this stock entry.`)
+
+    await f.click_primary_button("Submit")
+
+    await f.click_primary_button("Yes")
+
+    await f.speak(`On submission of manufacture entry, serial numbers are created
+            based on naming series defined in the item master.`)
+    
+    await f.search("serial no", "Serial No List")
+
+    await f.click_list_item("ONEPLS00001")
+
+    await f.scroll_to_section("Purchase / Manufacture Details")
+
+    await f.speak(`Just like purchase detail, serial numbers selling details
+            are also updated here.
+            
+            Let's create a sales transaction for the Serial No. and check it impacts.
+            `)
+    
+    await f.search("delivery note", "Delivery Note List")
+
+    await f.click_list_item("Sed Hendrerit Foundation")
+
+    await f.speak(`This is a delivery note of a serialized item.`)
+
+    await f.scroll_to_section("Currency and Price List")
+
+    await f.open_row("items", 1)
+    
+    await f.hover_element("label", "Serial No")
+
+    await f.speak(`here, enter serial numbers based on item's delivery quantity.`)
+
+    await f.close_row()
+
+    await f.speak(`let's Submit this Delivery Note.`)
+
+    await f.click_primary_button("Submit")
+
+    await f.click_primary_button("Yes")
+
+    await f.speak(`Now, let's go and check the impact on this delivery note on the 
+            serial number master.`)
+
+    await f.search("serial no", "Serial No List")
+
+    await f.click_list_item("7T4RO83O9349FH")
+
+    await f.speak(`Once serial number is delivery, warehouse name is reset from it.`)
+
+    await f.scroll_to_section("Delivery Details")
+
+    await f.speak(`In this section, customer and delivery details are fetched.`)
+
+    await f.scroll_to_section("Warranty / AMC Details")
+
+    await f.speak(`Based on the item's Delivery Note, Warranty, and AMC details
+            is also updated in the Serial number.`)
+
+    await f.speak(`For the serialized item, the stock balance and stock ledgers
+            are also tracked based on the in-stock serial numbers of the item.`)
+
+    await f.speak(`
+            Hope you found this video tutorial useful. For more details and free sign up, check e r p next dot com.
+            Thanks for watching.
+		`)
+});

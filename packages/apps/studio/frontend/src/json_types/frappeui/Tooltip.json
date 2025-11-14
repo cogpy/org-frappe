@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/TooltipProps",
+  "definitions": {
+    "TooltipProps": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "hoverDelay": {
+          "type": "number"
+        },
+        "placement": {
+          "type": "string",
+          "enum": [
+            "top",
+            "right",
+            "bottom",
+            "left"
+          ],
+          "description": "The preferred side of the trigger to render against when open. Will be reversed when collisions occur and avoidCollisions is enabled."
+        },
+        "arrowClass": {},
+        "disabled": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

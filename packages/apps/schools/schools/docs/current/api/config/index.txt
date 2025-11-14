@@ -1,4 +1,0 @@
-schools.config.desktop
-schools.config
-schools.config.docs
-schools.config.academics

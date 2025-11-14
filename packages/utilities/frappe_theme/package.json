@@ -1,7 +1,0 @@
-{
-  "name": "frappe_theme",
-  "version": "1.0.0",
-  "dependencies": {
-    "highlight.js": "^9.12.0"
-  }
-}

@@ -150,7 +150,7 @@ def upload_file(
     return drive_file
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_thumbnail(entity_name):
     drive_file = frappe.get_value(
         "Drive File",
@@ -407,6 +407,7 @@ def ensure_path(team, fullpath, parent=None):
 
 
 @frappe.whitelist()
+@default_team
 def create_link(team, title, link, parent=None):
     home_folder = get_home_folder(team)
     parent = parent or home_folder.name
@@ -532,7 +533,7 @@ def save_doc(entity_name, doc_name=None, content=None, yjs=None, comment=False):
             )
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def create_auth_token(entity_name):
     if not user_has_permission(entity_name, "read"):
         raise frappe.PermissionError("You do not have permission to view this file")
