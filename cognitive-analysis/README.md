@@ -2,10 +2,15 @@
 
 This directory contains a comprehensive evaluation of the Frappe Framework as a cognitive architecture, analyzed through the lens of 4E cognition and John Vervaeke's framework on relevance realization, wisdom cultivation, and the meaning crisis.
 
+## Latest Update
+
+**[Monorepo Evaluation 2025](monorepo-evaluation-2025.md)** - Updated assessment following the successful integration of 182 repositories into a unified monorepo structure (November 14, 2025).
+
 ## Documents
 
-### Primary Evaluation
-- **[final-evaluation-report.md](final-evaluation-report.md)** - Complete evaluation report with abstract, analysis, and recommendations
+### Primary Evaluations
+- **[monorepo-evaluation-2025.md](monorepo-evaluation-2025.md)** - Latest evaluation reflecting monorepo integration impact
+- **[final-evaluation-report.md](final-evaluation-report.md)** - Original comprehensive evaluation (November 8, 2025)
 
 ### Detailed Analysis
 - **[4e-analysis.md](4e-analysis.md)** - Deep dive into Embodied, Embedded, Extended, and Enactive cognition patterns
