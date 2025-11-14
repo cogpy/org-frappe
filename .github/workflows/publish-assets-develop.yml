@@ -32,14 +32,14 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/build
           tar -cvpzf $GITHUB_WORKSPACE/build/$GITHUB_SHA.tar.gz ./frappe-bench/sites/assets/frappe/dist
 
-      - name: Publish assets to S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl public-read
-        env:
-          AWS_S3_BUCKET: 'assets.frappeframework.com'
-          AWS_ACCESS_KEY_ID: ${{ secrets.S3_ASSETS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_ASSETS_SECRET_ACCESS_KEY }}
-          AWS_S3_ENDPOINT: 'http://s3.fr-par.scw.cloud'
-          AWS_REGION: 'fr-par'
-          SOURCE_DIR: '$GITHUB_WORKSPACE/build'
+#      - name: Publish assets to S3
+#        uses: jakejarvis/s3-sync-action@master
+#        with:
+#          args: --acl public-read
+#        env:
+#          AWS_S3_BUCKET: 'assets.frappeframework.com'
+#          AWS_ACCESS_KEY_ID: ${{ secrets.S3_ASSETS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_ASSETS_SECRET_ACCESS_KEY }}
+#          AWS_S3_ENDPOINT: 'http://s3.fr-par.scw.cloud'
+#          AWS_REGION: 'fr-par'
+#          SOURCE_DIR: '$GITHUB_WORKSPACE/build'
