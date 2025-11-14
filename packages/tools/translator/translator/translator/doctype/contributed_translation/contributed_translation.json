@@ -1,0 +1,178 @@
+{
+ "actions": [],
+ "creation": "2019-05-30 13:27:37.197662",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "language",
+  "section_break_7",
+  "source_string",
+  "app_name",
+  "column_break_9",
+  "translated_string",
+  "context",
+  "app_version",
+  "reference_section",
+  "contributor_name",
+  "reference_doctype",
+  "column_break_5",
+  "contributor_email",
+  "reference_docname",
+  "pushed_to_respective_bench",
+  "status"
+ ],
+ "fields": [
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Language",
+   "options": "Language",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_7",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "source_string",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Source String",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "translated_string",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Translated String",
+   "permlevel": 1
+  },
+  {
+   "default": "Contributed",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Contributed\nVerified\nRejected\nPR sent"
+  },
+  {
+   "fieldname": "app_name",
+   "fieldtype": "Data",
+   "label": "App Name",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "app_version",
+   "fieldtype": "Data",
+   "label": "App Version",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "reference_section",
+   "fieldtype": "Section Break",
+   "label": "Reference",
+   "permlevel": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "pushed_to_respective_bench",
+   "fieldtype": "Check",
+   "label": "Pushed To Respective Bench",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "reference_doctype",
+   "fieldtype": "Link",
+   "label": "Reference Doctype",
+   "options": "DocType",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "reference_docname",
+   "fieldtype": "Dynamic Link",
+   "label": "Reference Docname",
+   "options": "reference_doctype",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "contributor_email",
+   "fieldtype": "Data",
+   "label": "Contributor Email"
+  },
+  {
+   "fieldname": "contributor_name",
+   "fieldtype": "Data",
+   "label": "Contributor Name",
+   "permlevel": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "context",
+   "fieldtype": "Data",
+   "label": "Context",
+   "read_only": 1
+  }
+ ],
+ "in_create": 1,
+ "links": [],
+ "modified": "2020-03-04 20:36:40.829761",
+ "modified_by": "Administrator",
+ "module": "Translator",
+ "name": "Contributed Translation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "export": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Verifier",
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "permlevel": 1,
+   "read": 1,
+   "role": "Verifier"
+  }
+ ],
+ "read_only": 1,
+ "sort_field": "modified",
+ "sort_order": "ASC",
+ "title_field": "source_string",
+ "track_changes": 1
+}

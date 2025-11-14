@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2014-08-22 16:14:17.178029",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "engine": "InnoDB",
+ "field_order": [
+  "language",
+  "source_message",
+  "translated",
+  "column_break_5",
+  "source",
+  "translation_source",
+  "contribution_status",
+  "section_break_6",
+  "contributor_name",
+  "column_break_9",
+  "contributor_email"
+ ],
+ "fields": [
+  {
+   "fieldname": "language",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Language",
+   "options": "Language",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Link",
+   "label": "Source",
+   "options": "Source Message",
+   "read_only": 1,
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "translated",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Translated"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.translation_source==='Community Contribution'",
+   "fieldname": "contribution_status",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Contribution Status",
+   "options": "\nPending\nVerified\nRejected\nPR sent",
+   "search_index": 1
+  },
+  {
+   "fieldname": "contributor_name",
+   "fieldtype": "Data",
+   "label": "Contributor Name"
+  },
+  {
+   "fieldname": "contributor_email",
+   "fieldtype": "Data",
+   "label": "Contributor Email"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "source.message",
+   "fieldname": "source_message",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "Source Message",
+   "read_only": 1
+  },
+  {
+   "default": "Google Translated",
+   "fieldname": "translation_source",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Translation Source",
+   "options": "Google Translated\nCommunity Contribution\nCSV",
+   "search_index": 1
+  }
+ ],
+ "icon": "icon-comment",
+ "links": [],
+ "modified": "2020-03-11 22:51:45.236729",
+ "modified_by": "Administrator",
+ "module": "Translator",
+ "name": "Translated Message",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "translated"
+}

@@ -1,0 +1,67 @@
+{
+ "actions": [],
+ "creation": "2015-02-20 18:51:19.081495",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "engine": "InnoDB",
+ "field_order": [
+  "disabled",
+  "section_break",
+  "message",
+  "context",
+  "positions"
+ ],
+ "fields": [
+  {
+   "fieldname": "message",
+   "fieldtype": "Small Text",
+   "ignore_xss_filter": 1,
+   "in_list_view": 1,
+   "label": "Message"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "label": "Disabled",
+   "read_only": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "context",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Context"
+  },
+  {
+   "fieldname": "section_break",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "positions",
+   "fieldtype": "Table",
+   "label": "Positions",
+   "options": "Source Message Position"
+  }
+ ],
+ "links": [],
+ "modified": "2020-03-11 14:13:06.729978",
+ "modified_by": "Administrator",
+ "module": "Translator",
+ "name": "Source Message",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "message",
+ "track_changes": 1
+}
