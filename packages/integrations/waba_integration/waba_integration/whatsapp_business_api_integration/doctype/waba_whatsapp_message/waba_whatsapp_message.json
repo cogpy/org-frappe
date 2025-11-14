@@ -1,0 +1,194 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2022-05-22 12:43:17.381824",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "image_preview",
+  "preview_html_rendered",
+  "preview_html",
+  "section_break_3",
+  "status",
+  "from",
+  "to",
+  "message_type",
+  "column_break_3",
+  "type",
+  "id",
+  "message_body",
+  "media_information_section",
+  "media_id",
+  "media_hash",
+  "media_mime_type",
+  "column_break_9",
+  "media_filename",
+  "media_caption",
+  "media_file",
+  "media_image",
+  "media_uploaded"
+ ],
+ "fields": [
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nSent\nDelivered\nRead\nReceived\nMarked As Seen"
+  },
+  {
+   "default": "Outgoing",
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Incoming\nOutgoing",
+   "read_only": 1
+  },
+  {
+   "fieldname": "id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Message ID",
+   "read_only": 1,
+   "unique": 1
+  },
+  {
+   "depends_on": "eval:doc.type===\"Incoming\"",
+   "fieldname": "from",
+   "fieldtype": "Link",
+   "label": "From",
+   "options": "WABA WhatsApp Contact"
+  },
+  {
+   "fieldname": "media_id",
+   "fieldtype": "Data",
+   "label": "Media ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "media_hash",
+   "fieldtype": "Data",
+   "label": "Media Hash",
+   "read_only": 1
+  },
+  {
+   "fieldname": "media_mime_type",
+   "fieldtype": "Data",
+   "label": "Media MIME Type"
+  },
+  {
+   "fieldname": "media_filename",
+   "fieldtype": "Data",
+   "label": "Media Filename"
+  },
+  {
+   "fieldname": "media_caption",
+   "fieldtype": "Data",
+   "label": "Media Caption"
+  },
+  {
+   "depends_on": "eval:doc.message_type!=\"Text\"",
+   "fieldname": "media_information_section",
+   "fieldtype": "Section Break",
+   "label": "Media Information"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "message_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Message Type",
+   "options": "Text\nImage\nAudio\nVideo\nSystem\nDocument"
+  },
+  {
+   "depends_on": "eval:doc.message_type===\"Text\"",
+   "fieldname": "message_body",
+   "fieldtype": "Markdown Editor",
+   "label": "Message Body"
+  },
+  {
+   "depends_on": "eval:doc.type===\"Outgoing\"",
+   "fieldname": "to",
+   "fieldtype": "Link",
+   "label": "To",
+   "options": "WABA WhatsApp Contact"
+  },
+  {
+   "depends_on": "eval:!(doc.type==\"Outgoing\"&&doc.message_type==\"Image\")",
+   "fieldname": "media_file",
+   "fieldtype": "Attach",
+   "label": "Media File"
+  },
+  {
+   "depends_on": "eval:(doc.message_type==\"Image\"&&doc.media_file)",
+   "fieldname": "image_preview",
+   "fieldtype": "Image",
+   "label": "Image Preview",
+   "options": "media_image"
+  },
+  {
+   "depends_on": "eval:doc.type==\"Outgoing\"&&doc.message_type==\"Image\"",
+   "fieldname": "media_image",
+   "fieldtype": "Attach Image",
+   "label": "Media Image"
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "preview_html",
+   "fieldtype": "HTML Editor",
+   "hidden": 1,
+   "label": "Preview HTML"
+  },
+  {
+   "depends_on": "eval:doc.message_type==\"Audio\"||doc.message_type==\"Video\"",
+   "fieldname": "preview_html_rendered",
+   "fieldtype": "HTML",
+   "label": "Preview HTML Rendered"
+  },
+  {
+   "default": "0",
+   "fieldname": "media_uploaded",
+   "fieldtype": "Check",
+   "label": "Media Uploaded",
+   "read_only": 1
+  }
+ ],
+ "image_field": "media_image",
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2022-05-26 23:52:27.287967",
+ "modified_by": "Administrator",
+ "module": "WhatsApp Business API Integration",
+ "name": "WABA WhatsApp Message",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
