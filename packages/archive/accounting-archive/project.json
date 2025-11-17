@@ -1,0 +1,26 @@
+{
+  "name": "accounting-archive",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/accounting-archive",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/accounting-archive && npm run build",
+        "cwd": "packages/archive/accounting-archive"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/accounting-archive && npm test",
+        "cwd": "packages/archive/accounting-archive"
+      }
+    }
+  },
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

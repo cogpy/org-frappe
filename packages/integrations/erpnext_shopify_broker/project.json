@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_shopify_broker",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/erpnext_shopify_broker",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/erpnext_shopify_broker && python -m pytest",
+        "cwd": "packages/integrations/erpnext_shopify_broker"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/erpnext_shopify_broker && python -m ruff check .",
+        "cwd": "packages/integrations/erpnext_shopify_broker"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

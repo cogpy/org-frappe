@@ -1,0 +1,26 @@
+{
+  "name": "video",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/video",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/video && npm run build",
+        "cwd": "packages/utilities/video"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/video && npm test",
+        "cwd": "packages/utilities/video"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

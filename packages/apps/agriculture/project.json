@@ -1,0 +1,26 @@
+{
+  "name": "agriculture",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/agriculture",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/agriculture && python -m pytest",
+        "cwd": "packages/apps/agriculture"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/agriculture && python -m ruff check .",
+        "cwd": "packages/apps/agriculture"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

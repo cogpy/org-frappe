@@ -1,0 +1,26 @@
+{
+  "name": "ui",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/ui",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/ui && npm run build",
+        "cwd": "packages/utilities/ui"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/ui && npm test",
+        "cwd": "packages/utilities/ui"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

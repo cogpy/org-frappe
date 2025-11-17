@@ -1,0 +1,26 @@
+{
+  "name": "preview_generator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/preview_generator",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/preview_generator && python -m pytest",
+        "cwd": "packages/libs/preview_generator"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/preview_generator && python -m ruff check .",
+        "cwd": "packages/libs/preview_generator"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

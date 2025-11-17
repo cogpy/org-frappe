@@ -1,0 +1,26 @@
+{
+  "name": "intellisense",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/intellisense",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/intellisense && npm run build",
+        "cwd": "packages/tools/intellisense"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/intellisense && npm test",
+        "cwd": "packages/tools/intellisense"
+      }
+    }
+  },
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

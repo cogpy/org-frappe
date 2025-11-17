@@ -1,0 +1,26 @@
+{
+  "name": "charts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/charts",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/charts && npm run build",
+        "cwd": "packages/libs/charts"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/charts && npm test",
+        "cwd": "packages/libs/charts"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

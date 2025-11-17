@@ -1,0 +1,26 @@
+{
+  "name": "datatable",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/datatable",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/datatable && npm run build",
+        "cwd": "packages/libs/datatable"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/datatable && npm test",
+        "cwd": "packages/libs/datatable"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

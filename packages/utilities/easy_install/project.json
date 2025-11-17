@@ -1,0 +1,11 @@
+{
+  "name": "easy_install",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/easy_install",
+  "projectType": "library",
+  "targets": {},
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

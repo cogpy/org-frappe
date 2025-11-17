@@ -1,0 +1,26 @@
+{
+  "name": "frappejs-cli",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/frappejs-cli",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/frappejs-cli && npm run build",
+        "cwd": "packages/libs/frappejs-cli"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/frappejs-cli && npm test",
+        "cwd": "packages/libs/frappejs-cli"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

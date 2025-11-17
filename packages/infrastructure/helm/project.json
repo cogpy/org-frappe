@@ -1,0 +1,11 @@
+{
+  "name": "helm",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/helm",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

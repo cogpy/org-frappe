@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_gst_compliance",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/regional/erpnext_gst_compliance",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/erpnext_gst_compliance && python -m pytest",
+        "cwd": "packages/regional/erpnext_gst_compliance"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/erpnext_gst_compliance && python -m ruff check .",
+        "cwd": "packages/regional/erpnext_gst_compliance"
+      }
+    }
+  },
+  "tags": [
+    "scope:regional",
+    "type:localization"
+  ]
+}

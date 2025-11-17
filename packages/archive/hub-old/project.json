@@ -1,0 +1,26 @@
+{
+  "name": "hub-old",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/hub-old",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/hub-old && python -m pytest",
+        "cwd": "packages/archive/hub-old"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/hub-old && python -m ruff check .",
+        "cwd": "packages/archive/hub-old"
+      }
+    }
+  },
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

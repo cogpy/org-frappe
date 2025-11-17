@@ -1,0 +1,33 @@
+{
+  "name": "insights",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/insights",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/insights && npm run build",
+        "cwd": "packages/apps/insights"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/insights && python -m pytest",
+        "cwd": "packages/apps/insights"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/insights && python -m ruff check .",
+        "cwd": "packages/apps/insights"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

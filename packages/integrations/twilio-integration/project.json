@@ -1,0 +1,26 @@
+{
+  "name": "twilio-integration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/twilio-integration",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/twilio-integration && python -m pytest",
+        "cwd": "packages/integrations/twilio-integration"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/twilio-integration && python -m ruff check .",
+        "cwd": "packages/integrations/twilio-integration"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "wkhtmltopdf",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/wkhtmltopdf",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

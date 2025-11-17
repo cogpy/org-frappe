@@ -1,0 +1,26 @@
+{
+  "name": "frappejs-accounting",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/frappejs-accounting",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/frappejs-accounting && npm run build",
+        "cwd": "packages/libs/frappejs-accounting"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/frappejs-accounting && npm test",
+        "cwd": "packages/libs/frappejs-accounting"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

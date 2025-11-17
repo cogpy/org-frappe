@@ -1,0 +1,33 @@
+{
+  "name": "slides",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/slides",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/slides && npm run build",
+        "cwd": "packages/apps/slides"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/slides && python -m pytest",
+        "cwd": "packages/apps/slides"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/slides && python -m ruff check .",
+        "cwd": "packages/apps/slides"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

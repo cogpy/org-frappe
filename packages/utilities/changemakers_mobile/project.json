@@ -1,0 +1,26 @@
+{
+  "name": "changemakers_mobile",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/changemakers_mobile",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/changemakers_mobile && npm run build",
+        "cwd": "packages/utilities/changemakers_mobile"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/changemakers_mobile && npm test",
+        "cwd": "packages/utilities/changemakers_mobile"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

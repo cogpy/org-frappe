@@ -1,0 +1,26 @@
+{
+  "name": "knowledge_base",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/knowledge_base",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/knowledge_base && python -m pytest",
+        "cwd": "packages/utilities/knowledge_base"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/knowledge_base && python -m ruff check .",
+        "cwd": "packages/utilities/knowledge_base"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

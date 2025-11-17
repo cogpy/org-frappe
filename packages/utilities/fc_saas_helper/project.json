@@ -1,0 +1,26 @@
+{
+  "name": "fc_saas_helper",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/fc_saas_helper",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/fc_saas_helper && python -m pytest",
+        "cwd": "packages/utilities/fc_saas_helper"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/fc_saas_helper && python -m ruff check .",
+        "cwd": "packages/utilities/fc_saas_helper"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "indiaos",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/regional/indiaos",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/indiaos && npm run build",
+        "cwd": "packages/regional/indiaos"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/indiaos && python -m pytest",
+        "cwd": "packages/regional/indiaos"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/indiaos && python -m ruff check .",
+        "cwd": "packages/regional/indiaos"
+      }
+    }
+  },
+  "tags": [
+    "scope:regional",
+    "type:localization"
+  ]
+}

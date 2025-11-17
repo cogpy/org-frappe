@@ -1,0 +1,26 @@
+{
+  "name": "taxjar_integration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/taxjar_integration",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/taxjar_integration && python -m pytest",
+        "cwd": "packages/integrations/taxjar_integration"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/taxjar_integration && python -m ruff check .",
+        "cwd": "packages/integrations/taxjar_integration"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

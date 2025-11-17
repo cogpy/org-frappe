@@ -1,0 +1,26 @@
+{
+  "name": "blog",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/docs/blog",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/blog && python -m pytest",
+        "cwd": "packages/docs/blog"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/blog && python -m ruff check .",
+        "cwd": "packages/docs/blog"
+      }
+    }
+  },
+  "tags": [
+    "scope:docs",
+    "type:documentation"
+  ]
+}

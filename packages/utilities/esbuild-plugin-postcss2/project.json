@@ -1,0 +1,26 @@
+{
+  "name": "esbuild-plugin-postcss2",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/esbuild-plugin-postcss2",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/esbuild-plugin-postcss2 && npm run build",
+        "cwd": "packages/utilities/esbuild-plugin-postcss2"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/esbuild-plugin-postcss2 && npm test",
+        "cwd": "packages/utilities/esbuild-plugin-postcss2"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

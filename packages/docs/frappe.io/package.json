@@ -16,7 +16,7 @@
     "generate:docs": "node project-docs"
   },
   "dependencies": {
-    "bootstrap": "^4.1.1",
+    "bootstrap": "workspace:*",
     "node-sass": "^4.9.0",
     "nuxt": "^1.0.0",
     "sass-loader": "^7.0.1"

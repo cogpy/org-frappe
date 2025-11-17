@@ -1,0 +1,26 @@
+{
+  "name": "chat",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/chat",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/chat && python -m pytest",
+        "cwd": "packages/apps/chat"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/chat && python -m ruff check .",
+        "cwd": "packages/apps/chat"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

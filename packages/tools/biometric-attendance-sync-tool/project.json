@@ -1,0 +1,11 @@
+{
+  "name": "biometric-attendance-sync-tool",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/biometric-attendance-sync-tool",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

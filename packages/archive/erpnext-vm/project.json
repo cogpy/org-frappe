@@ -1,0 +1,11 @@
+{
+  "name": "erpnext-vm",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/erpnext-vm",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

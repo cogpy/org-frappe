@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "frappe-charts": "^1.1.0",
+    "frappe-charts": "workspace:*",
     "less-loader": "^4.1.0",
     "vue": "^2.6.6"
   },

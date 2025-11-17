@@ -1,0 +1,26 @@
+{
+  "name": "lending",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/lending",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/lending && python -m pytest",
+        "cwd": "packages/apps/lending"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/lending && python -m ruff check .",
+        "cwd": "packages/apps/lending"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

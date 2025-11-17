@@ -1,0 +1,26 @@
+{
+  "name": "frappe.io",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/docs/frappe.io",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/frappe.io && npm run build",
+        "cwd": "packages/docs/frappe.io"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/frappe.io && npm test",
+        "cwd": "packages/docs/frappe.io"
+      }
+    }
+  },
+  "tags": [
+    "scope:docs",
+    "type:documentation"
+  ]
+}

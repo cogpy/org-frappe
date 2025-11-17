@@ -1,0 +1,33 @@
+{
+  "name": "build_ctf",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/build_ctf",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/build_ctf && npm run build",
+        "cwd": "packages/utilities/build_ctf"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/build_ctf && python -m pytest",
+        "cwd": "packages/utilities/build_ctf"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/build_ctf && python -m ruff check .",
+        "cwd": "packages/utilities/build_ctf"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

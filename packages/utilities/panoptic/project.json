@@ -1,0 +1,26 @@
+{
+  "name": "panoptic",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/panoptic",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/panoptic && python -m pytest",
+        "cwd": "packages/utilities/panoptic"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/panoptic && python -m ruff check .",
+        "cwd": "packages/utilities/panoptic"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

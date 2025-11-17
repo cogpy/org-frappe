@@ -1,0 +1,26 @@
+{
+  "name": "cordova-wrapper",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/cordova-wrapper",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/cordova-wrapper && npm run build",
+        "cwd": "packages/utilities/cordova-wrapper"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/cordova-wrapper && npm test",
+        "cwd": "packages/utilities/cordova-wrapper"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

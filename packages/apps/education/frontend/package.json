@@ -11,7 +11,7 @@
   "dependencies": {
     "dayjs": "^1.11.10",
     "feather-icons": "^4.28.0",
-    "frappe-ui": "^0.1.17",
+    "frappe-ui": "workspace:*",
     "lucide-vue-next": "^0.259.0",
     "pinia": "^2.1.7",
     "qalendar": "^3.6.1",

@@ -1,0 +1,26 @@
+{
+  "name": "KSA",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/regional/KSA",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/KSA && python -m pytest",
+        "cwd": "packages/regional/KSA"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/KSA && python -m ruff check .",
+        "cwd": "packages/regional/KSA"
+      }
+    }
+  },
+  "tags": [
+    "scope:regional",
+    "type:localization"
+  ]
+}

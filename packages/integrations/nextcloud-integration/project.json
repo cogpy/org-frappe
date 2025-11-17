@@ -1,0 +1,26 @@
+{
+  "name": "nextcloud-integration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/nextcloud-integration",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/nextcloud-integration && python -m pytest",
+        "cwd": "packages/integrations/nextcloud-integration"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/nextcloud-integration && python -m ruff check .",
+        "cwd": "packages/integrations/nextcloud-integration"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

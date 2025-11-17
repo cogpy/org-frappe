@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_usa",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/regional/erpnext_usa",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/erpnext_usa && python -m pytest",
+        "cwd": "packages/regional/erpnext_usa"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/erpnext_usa && python -m ruff check .",
+        "cwd": "packages/regional/erpnext_usa"
+      }
+    }
+  },
+  "tags": [
+    "scope:regional",
+    "type:localization"
+  ]
+}

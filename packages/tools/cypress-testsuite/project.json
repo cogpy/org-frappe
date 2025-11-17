@@ -1,0 +1,11 @@
+{
+  "name": "cypress-testsuite",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/cypress-testsuite",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

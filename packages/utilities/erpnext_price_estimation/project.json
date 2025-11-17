@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_price_estimation",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/erpnext_price_estimation",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext_price_estimation && python -m pytest",
+        "cwd": "packages/utilities/erpnext_price_estimation"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext_price_estimation && python -m ruff check .",
+        "cwd": "packages/utilities/erpnext_price_estimation"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

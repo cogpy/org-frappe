@@ -1,0 +1,33 @@
+{
+  "name": "helpdesk",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/helpdesk",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/helpdesk && npm run build",
+        "cwd": "packages/apps/helpdesk"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/helpdesk && python -m pytest",
+        "cwd": "packages/apps/helpdesk"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/helpdesk && python -m ruff check .",
+        "cwd": "packages/apps/helpdesk"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

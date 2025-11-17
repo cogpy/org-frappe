@@ -1,0 +1,11 @@
+{
+  "name": "erpnext_vagrant",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/erpnext_vagrant",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

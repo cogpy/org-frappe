@@ -1,0 +1,26 @@
+{
+  "name": "exotel_integration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/exotel_integration",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/exotel_integration && python -m pytest",
+        "cwd": "packages/integrations/exotel_integration"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/exotel_integration && python -m ruff check .",
+        "cwd": "packages/integrations/exotel_integration"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

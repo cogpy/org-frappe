@@ -1,0 +1,26 @@
+{
+  "name": "pyngrok",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/pyngrok",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/pyngrok && python -m pytest",
+        "cwd": "packages/utilities/pyngrok"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/pyngrok && python -m ruff check .",
+        "cwd": "packages/utilities/pyngrok"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

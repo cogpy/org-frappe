@@ -1,0 +1,11 @@
+{
+  "name": "rubik",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/rubik",
+  "projectType": "library",
+  "targets": {},
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

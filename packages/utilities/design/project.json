@@ -1,0 +1,11 @@
+{
+  "name": "design",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/design",
+  "projectType": "library",
+  "targets": {},
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

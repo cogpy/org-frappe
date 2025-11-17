@@ -1,0 +1,26 @@
+{
+  "name": "shopping_cart",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/shopping_cart",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/shopping_cart && python -m pytest",
+        "cwd": "packages/archive/shopping_cart"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/shopping_cart && python -m ruff check .",
+        "cwd": "packages/archive/shopping_cart"
+      }
+    }
+  },
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

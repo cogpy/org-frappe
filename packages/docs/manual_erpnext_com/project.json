@@ -1,0 +1,26 @@
+{
+  "name": "manual_erpnext_com",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/docs/manual_erpnext_com",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/manual_erpnext_com && python -m pytest",
+        "cwd": "packages/docs/manual_erpnext_com"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/manual_erpnext_com && python -m ruff check .",
+        "cwd": "packages/docs/manual_erpnext_com"
+      }
+    }
+  },
+  "tags": [
+    "scope:docs",
+    "type:documentation"
+  ]
+}

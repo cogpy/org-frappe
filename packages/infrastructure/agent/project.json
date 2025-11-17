@@ -1,0 +1,26 @@
+{
+  "name": "agent",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/agent",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/agent && python -m pytest",
+        "cwd": "packages/infrastructure/agent"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/agent && python -m ruff check .",
+        "cwd": "packages/infrastructure/agent"
+      }
+    }
+  },
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

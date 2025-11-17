@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_ui_tests",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/erpnext_ui_tests",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext_ui_tests && python -m pytest",
+        "cwd": "packages/utilities/erpnext_ui_tests"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext_ui_tests && python -m ruff check .",
+        "cwd": "packages/utilities/erpnext_ui_tests"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

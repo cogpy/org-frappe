@@ -1,0 +1,26 @@
+{
+  "name": "mobile-accounting",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/mobile-accounting",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/mobile-accounting && npm run build",
+        "cwd": "packages/utilities/mobile-accounting"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/mobile-accounting && npm test",
+        "cwd": "packages/utilities/mobile-accounting"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

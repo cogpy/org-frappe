@@ -1,0 +1,26 @@
+{
+  "name": "test-orchestrator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/test-orchestrator",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/test-orchestrator && npm run build",
+        "cwd": "packages/tools/test-orchestrator"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/test-orchestrator && npm test",
+        "cwd": "packages/tools/test-orchestrator"
+      }
+    }
+  },
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

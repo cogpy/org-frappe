@@ -1,0 +1,26 @@
+{
+  "name": "frappe-client",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/core/frappe-client",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/core/frappe-client && python -m pytest",
+        "cwd": "packages/core/frappe-client"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/core/frappe-client && python -m ruff check .",
+        "cwd": "packages/core/frappe-client"
+      }
+    }
+  },
+  "tags": [
+    "scope:core",
+    "type:framework"
+  ]
+}

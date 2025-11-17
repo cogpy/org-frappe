@@ -1,0 +1,26 @@
+{
+  "name": "frappe_docs",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/docs/frappe_docs",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/frappe_docs && python -m pytest",
+        "cwd": "packages/docs/frappe_docs"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/docs/frappe_docs && python -m ruff check .",
+        "cwd": "packages/docs/frappe_docs"
+      }
+    }
+  },
+  "tags": [
+    "scope:docs",
+    "type:documentation"
+  ]
+}

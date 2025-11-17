@@ -1,0 +1,26 @@
+{
+  "name": "air-datepicker",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/air-datepicker",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/air-datepicker && npm run build",
+        "cwd": "packages/libs/air-datepicker"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/air-datepicker && npm test",
+        "cwd": "packages/libs/air-datepicker"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

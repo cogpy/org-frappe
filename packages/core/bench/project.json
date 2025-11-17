@@ -1,0 +1,26 @@
+{
+  "name": "bench",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/core/bench",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/core/bench && python -m pytest",
+        "cwd": "packages/core/bench"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/core/bench && python -m ruff check .",
+        "cwd": "packages/core/bench"
+      }
+    }
+  },
+  "tags": [
+    "scope:core",
+    "type:framework"
+  ]
+}

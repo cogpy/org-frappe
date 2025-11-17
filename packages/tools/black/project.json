@@ -1,0 +1,26 @@
+{
+  "name": "black",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/black",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/black && python -m pytest",
+        "cwd": "packages/tools/black"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/black && python -m ruff check .",
+        "cwd": "packages/tools/black"
+      }
+    }
+  },
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

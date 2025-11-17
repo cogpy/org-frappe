@@ -1,0 +1,26 @@
+{
+  "name": "india_payroll",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/regional/india_payroll",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/india_payroll && python -m pytest",
+        "cwd": "packages/regional/india_payroll"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/india_payroll && python -m ruff check .",
+        "cwd": "packages/regional/india_payroll"
+      }
+    }
+  },
+  "tags": [
+    "scope:regional",
+    "type:localization"
+  ]
+}

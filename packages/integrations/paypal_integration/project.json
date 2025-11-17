@@ -1,0 +1,26 @@
+{
+  "name": "paypal_integration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/paypal_integration",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/paypal_integration && python -m pytest",
+        "cwd": "packages/integrations/paypal_integration"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/paypal_integration && python -m ruff check .",
+        "cwd": "packages/integrations/paypal_integration"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

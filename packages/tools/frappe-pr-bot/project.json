@@ -1,0 +1,26 @@
+{
+  "name": "frappe-pr-bot",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/frappe-pr-bot",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/frappe-pr-bot && npm run build",
+        "cwd": "packages/tools/frappe-pr-bot"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/frappe-pr-bot && npm test",
+        "cwd": "packages/tools/frappe-pr-bot"
+      }
+    }
+  },
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

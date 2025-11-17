@@ -1,0 +1,26 @@
+{
+  "name": "quill-image-resize-module",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/quill-image-resize-module",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/quill-image-resize-module && npm run build",
+        "cwd": "packages/libs/quill-image-resize-module"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/quill-image-resize-module && npm test",
+        "cwd": "packages/libs/quill-image-resize-module"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

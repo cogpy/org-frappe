@@ -1,0 +1,26 @@
+{
+  "name": "chart_of_accounts_builder",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/chart_of_accounts_builder",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/chart_of_accounts_builder && python -m pytest",
+        "cwd": "packages/libs/chart_of_accounts_builder"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/chart_of_accounts_builder && python -m ruff check .",
+        "cwd": "packages/libs/chart_of_accounts_builder"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "bhumi-awards-portal",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/bhumi-awards-portal",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/bhumi-awards-portal && npm run build",
+        "cwd": "packages/utilities/bhumi-awards-portal"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/bhumi-awards-portal && python -m pytest",
+        "cwd": "packages/utilities/bhumi-awards-portal"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/bhumi-awards-portal && python -m ruff check .",
+        "cwd": "packages/utilities/bhumi-awards-portal"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

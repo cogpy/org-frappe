@@ -1,0 +1,26 @@
+{
+  "name": "email_delivery_service",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/email_delivery_service",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/email_delivery_service && python -m pytest",
+        "cwd": "packages/utilities/email_delivery_service"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/email_delivery_service && python -m ruff check .",
+        "cwd": "packages/utilities/email_delivery_service"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

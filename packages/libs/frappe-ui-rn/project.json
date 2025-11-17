@@ -1,0 +1,26 @@
+{
+  "name": "frappe-ui-rn",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/frappe-ui-rn",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/frappe-ui-rn && npm run build",
+        "cwd": "packages/libs/frappe-ui-rn"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/frappe-ui-rn && npm test",
+        "cwd": "packages/libs/frappe-ui-rn"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

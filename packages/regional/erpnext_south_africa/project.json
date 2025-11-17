@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_south_africa",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/regional/erpnext_south_africa",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/erpnext_south_africa && python -m pytest",
+        "cwd": "packages/regional/erpnext_south_africa"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/regional/erpnext_south_africa && python -m ruff check .",
+        "cwd": "packages/regional/erpnext_south_africa"
+      }
+    }
+  },
+  "tags": [
+    "scope:regional",
+    "type:localization"
+  ]
+}

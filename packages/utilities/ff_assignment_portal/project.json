@@ -1,0 +1,33 @@
+{
+  "name": "ff_assignment_portal",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/ff_assignment_portal",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/ff_assignment_portal && npm run build",
+        "cwd": "packages/utilities/ff_assignment_portal"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/ff_assignment_portal && python -m pytest",
+        "cwd": "packages/utilities/ff_assignment_portal"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/ff_assignment_portal && python -m ruff check .",
+        "cwd": "packages/utilities/ff_assignment_portal"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

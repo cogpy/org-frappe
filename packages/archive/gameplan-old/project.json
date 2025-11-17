@@ -1,0 +1,26 @@
+{
+  "name": "gameplan-old",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/gameplan-old",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/gameplan-old && python -m pytest",
+        "cwd": "packages/archive/gameplan-old"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/archive/gameplan-old && python -m ruff check .",
+        "cwd": "packages/archive/gameplan-old"
+      }
+    }
+  },
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

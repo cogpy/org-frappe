@@ -1,0 +1,26 @@
+{
+  "name": "frappe_cloud_migrator",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/frappe_cloud_migrator",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/frappe_cloud_migrator && python -m pytest",
+        "cwd": "packages/infrastructure/frappe_cloud_migrator"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/frappe_cloud_migrator && python -m ruff check .",
+        "cwd": "packages/infrastructure/frappe_cloud_migrator"
+      }
+    }
+  },
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

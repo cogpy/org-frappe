@@ -1,0 +1,27 @@
+{
+  "name": "frappe",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/core/frappe",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "echo 'Building frappe framework...'"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/core/frappe && python -m pytest"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/core/frappe && python -m ruff check ."
+      }
+    }
+  },
+  "tags": ["scope:core", "type:framework"]
+}

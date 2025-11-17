@@ -1,0 +1,26 @@
+{
+  "name": "bench_manager",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/bench_manager",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/bench_manager && python -m pytest",
+        "cwd": "packages/tools/bench_manager"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/tools/bench_manager && python -m ruff check .",
+        "cwd": "packages/tools/bench_manager"
+      }
+    }
+  },
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

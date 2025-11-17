@@ -1,0 +1,11 @@
+{
+  "name": "semgrep-rules",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/tools/semgrep-rules",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:tools",
+    "type:tool"
+  ]
+}

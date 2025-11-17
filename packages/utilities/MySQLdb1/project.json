@@ -1,0 +1,26 @@
+{
+  "name": "MySQLdb1",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/MySQLdb1",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/MySQLdb1 && python -m pytest",
+        "cwd": "packages/utilities/MySQLdb1"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/MySQLdb1 && python -m ruff check .",
+        "cwd": "packages/utilities/MySQLdb1"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

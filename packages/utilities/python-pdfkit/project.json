@@ -1,0 +1,26 @@
+{
+  "name": "python-pdfkit",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/python-pdfkit",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/python-pdfkit && python -m pytest",
+        "cwd": "packages/utilities/python-pdfkit"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/python-pdfkit && python -m ruff check .",
+        "cwd": "packages/utilities/python-pdfkit"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

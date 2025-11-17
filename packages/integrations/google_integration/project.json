@@ -1,0 +1,11 @@
+{
+  "name": "google_integration",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/google_integration",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

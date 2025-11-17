@@ -1,0 +1,11 @@
+{
+  "name": "archives",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/archive/archives",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:archive",
+    "type:legacy"
+  ]
+}

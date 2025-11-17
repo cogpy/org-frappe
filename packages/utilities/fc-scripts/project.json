@@ -1,0 +1,11 @@
+{
+  "name": "fc-scripts",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/fc-scripts",
+  "projectType": "library",
+  "targets": {},
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

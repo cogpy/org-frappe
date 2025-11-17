@@ -1,0 +1,11 @@
+{
+  "name": "frappe_docker",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/frappe_docker",
+  "projectType": "application",
+  "targets": {},
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

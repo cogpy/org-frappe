@@ -1,0 +1,26 @@
+{
+  "name": "gunicorn",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/gunicorn",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/gunicorn && python -m pytest",
+        "cwd": "packages/infrastructure/gunicorn"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/gunicorn && python -m ruff check .",
+        "cwd": "packages/infrastructure/gunicorn"
+      }
+    }
+  },
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

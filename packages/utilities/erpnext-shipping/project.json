@@ -1,0 +1,26 @@
+{
+  "name": "erpnext-shipping",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/erpnext-shipping",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext-shipping && python -m pytest",
+        "cwd": "packages/utilities/erpnext-shipping"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext-shipping && python -m ruff check .",
+        "cwd": "packages/utilities/erpnext-shipping"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

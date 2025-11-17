@@ -1,0 +1,11 @@
+{
+  "name": "test_server",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/test_server",
+  "projectType": "library",
+  "targets": {},
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

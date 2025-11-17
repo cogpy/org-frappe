@@ -1,0 +1,26 @@
+{
+  "name": "mysqlclient-python",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/mysqlclient-python",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/mysqlclient-python && python -m pytest",
+        "cwd": "packages/utilities/mysqlclient-python"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/mysqlclient-python && python -m ruff check .",
+        "cwd": "packages/utilities/mysqlclient-python"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "frappe-charts": "^1.6.1"
+    "frappe-charts": "workspace:*"
   }
 }

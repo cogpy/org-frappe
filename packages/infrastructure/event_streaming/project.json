@@ -1,0 +1,26 @@
+{
+  "name": "event_streaming",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/infrastructure/event_streaming",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/event_streaming && python -m pytest",
+        "cwd": "packages/infrastructure/event_streaming"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/infrastructure/event_streaming && python -m ruff check .",
+        "cwd": "packages/infrastructure/event_streaming"
+      }
+    }
+  },
+  "tags": [
+    "scope:infrastructure",
+    "type:infra"
+  ]
+}

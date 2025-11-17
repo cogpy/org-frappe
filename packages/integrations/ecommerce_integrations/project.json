@@ -1,0 +1,26 @@
+{
+  "name": "ecommerce_integrations",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/integrations/ecommerce_integrations",
+  "projectType": "application",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/ecommerce_integrations && python -m pytest",
+        "cwd": "packages/integrations/ecommerce_integrations"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/integrations/ecommerce_integrations && python -m ruff check .",
+        "cwd": "packages/integrations/ecommerce_integrations"
+      }
+    }
+  },
+  "tags": [
+    "scope:integrations",
+    "type:integration"
+  ]
+}

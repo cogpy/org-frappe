@@ -1,0 +1,26 @@
+{
+  "name": "jquery-ui-bootstrap",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/libs/jquery-ui-bootstrap",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/jquery-ui-bootstrap && npm run build",
+        "cwd": "packages/libs/jquery-ui-bootstrap"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/libs/jquery-ui-bootstrap && npm test",
+        "cwd": "packages/libs/jquery-ui-bootstrap"
+      }
+    }
+  },
+  "tags": [
+    "scope:libs",
+    "type:library"
+  ]
+}

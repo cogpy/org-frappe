@@ -1,0 +1,26 @@
+{
+  "name": "erpnext_demo",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/erpnext_demo",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext_demo && python -m pytest",
+        "cwd": "packages/utilities/erpnext_demo"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/erpnext_demo && python -m ruff check .",
+        "cwd": "packages/utilities/erpnext_demo"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}

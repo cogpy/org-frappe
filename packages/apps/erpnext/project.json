@@ -1,0 +1,33 @@
+{
+  "name": "erpnext",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/apps/erpnext",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/erpnext && npm run build",
+        "cwd": "packages/apps/erpnext"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/erpnext && python -m pytest",
+        "cwd": "packages/apps/erpnext"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/apps/erpnext && python -m ruff check .",
+        "cwd": "packages/apps/erpnext"
+      }
+    }
+  },
+  "tags": [
+    "scope:apps",
+    "type:application"
+  ]
+}

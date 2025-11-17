@@ -1,0 +1,26 @@
+{
+  "name": "offsite_backups",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/utilities/offsite_backups",
+  "projectType": "library",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/offsite_backups && python -m pytest",
+        "cwd": "packages/utilities/offsite_backups"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "cd packages/utilities/offsite_backups && python -m ruff check .",
+        "cwd": "packages/utilities/offsite_backups"
+      }
+    }
+  },
+  "tags": [
+    "scope:utilities",
+    "type:utility"
+  ]
+}
